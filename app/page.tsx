@@ -3,22 +3,38 @@ import { Play, Pause, Volume2, VolumeX } from "lucide-react";
 import type React from "react";
 
 import { motion } from "framer-motion";
-import { useState, useRef, useEffect, useMemo, useCallback } from "react";
-import { AyahOfTheDay } from "@/components/ayah-of-the-day";
+import {
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+  useCallback,
+  lazy,
+  Suspense,
+} from "react";
 import { Footer } from "@/components/footer";
 import { Slider } from "@/components/slider";
 import { Toast } from "@/components/toast";
 import { InfoModal } from "@/components/info-modal";
 import { FridayCard } from "@/components/friday-card";
 import { AlKahfModal } from "@/components/alkahf-modal";
-import { PrayerTimes } from "@/components/prayer-times";
 import { Header } from "@/components/header";
 import { toArabicNum } from "@/lib/arabic-numerals";
 import { getTimePhase, getPhaseConfig } from "@/lib/time-phase";
 
-const STREAM_URL =
-  process.env.NEXT_PUBLIC_STREAM_URL ||
-  "https://n01.radiojar.com/8s5u5tpdtwzuv";
+// Lazy load non-critical components
+const AyahOfTheDay = lazy(() =>
+  import("@/components/ayah-of-the-day").then((mod) => ({
+    default: mod.AyahOfTheDay,
+  }))
+);
+const PrayerTimes = lazy(() =>
+  import("@/components/prayer-times").then((mod) => ({
+    default: mod.PrayerTimes,
+  }))
+);
+
+const STREAM_URL = "https://n01.radiojar.com/8s5u5tpdtwzuv";
 
 export default function Home() {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -130,18 +146,31 @@ export default function Home() {
     }
   }, [isMuted, volume, previousVolume]);
 
-  // Keyboard controls - Space for play/pause
+  // Keyboard controls - Space for play/pause, Arrow Up/Down for volume
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code === "Space" && e.target === document.body) {
-        e.preventDefault();
-        togglePlay();
+      if (
+        e.target === document.body ||
+        (e.target as HTMLElement).tagName === "BUTTON"
+      ) {
+        if (e.code === "Space") {
+          e.preventDefault();
+          togglePlay();
+        } else if (e.code === "ArrowUp") {
+          e.preventDefault();
+          const newVolume = Math.min(volume + 5, 100);
+          handleVolumeChange([newVolume]);
+        } else if (e.code === "ArrowDown") {
+          e.preventDefault();
+          const newVolume = Math.max(volume - 5, 0);
+          handleVolumeChange([newVolume]);
+        }
       }
     };
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isPlaying]);
+  }, [isPlaying, volume, handleVolumeChange, togglePlay]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -266,7 +295,7 @@ export default function Home() {
 
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div
-          className={`absolute inset-0 transition-all duration-[3000ms] ${phaseConfig.bgClass}`}
+          className={`absolute inset-0 transition-all duration-200 ${phaseConfig.bgClass}`}
         />
         <motion.div
           className={`absolute top-0 left-1/4 w-[800px] h-[800px] bg-gradient-radial ${bgGradientClass} via-transparent to-transparent rounded-full blur-3xl opacity-20`}
@@ -276,8 +305,8 @@ export default function Home() {
             scale: [1, 1.2, 1],
           }}
           transition={{
-            duration: 20,
-            repeat: Number.POSITIVE_INFINITY,
+            duration: prefersReducedMotion ? 0 : 20,
+            repeat: prefersReducedMotion ? 0 : Number.POSITIVE_INFINITY,
             ease: "easeInOut",
           }}
         />
@@ -289,8 +318,8 @@ export default function Home() {
             scale: [1, 1.3, 1],
           }}
           transition={{
-            duration: 25,
-            repeat: Number.POSITIVE_INFINITY,
+            duration: prefersReducedMotion ? 0 : 25,
+            repeat: prefersReducedMotion ? 0 : Number.POSITIVE_INFINITY,
             ease: "easeInOut",
           }}
         />
@@ -555,7 +584,23 @@ export default function Home() {
                   role="region"
                   aria-label="مواقيت الصلاة"
                 >
-                  <PrayerTimes />
+                  <Suspense
+                    fallback={
+                      <div className="glass-panel rounded-3xl p-6 border-2 border-primary/20 animate-pulse">
+                        <div className="h-8 bg-primary/10 rounded mb-4 w-1/3" />
+                        <div className="space-y-3">
+                          {[1, 2, 3, 4, 5].map((i) => (
+                            <div
+                              key={i}
+                              className="h-12 bg-primary/5 rounded"
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    }
+                  >
+                    <PrayerTimes />
+                  </Suspense>
                 </motion.section>
               </div>
             </div>
@@ -573,7 +618,19 @@ export default function Home() {
             aria-label="آية اليوم"
             className="w-full max-w-5xl mx-auto"
           >
-            <AyahOfTheDay />
+            <Suspense
+              fallback={
+                <div className="glass-panel rounded-3xl p-8 border-2 border-primary/20 animate-pulse">
+                  <div className="h-6 bg-primary/10 rounded mb-6 w-1/4 mx-auto" />
+                  <div className="space-y-4">
+                    <div className="h-20 bg-primary/5 rounded" />
+                    <div className="h-6 bg-primary/5 rounded w-3/4 mx-auto" />
+                  </div>
+                </div>
+              }
+            >
+              <AyahOfTheDay />
+            </Suspense>
           </motion.section>
         </div>
 

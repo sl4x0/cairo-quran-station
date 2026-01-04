@@ -1,16 +1,34 @@
 import type React from "react";
 import type { Metadata, Viewport } from "next";
-import { Readex_Pro, Orbitron } from "next/font/google";
+import { Readex_Pro, Orbitron, Cairo, Amiri } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { ErrorBoundary } from "@/components/error-boundary";
 import "./globals.css";
 
+// Readex Pro - For body text and general UI
 const readexPro = Readex_Pro({
   subsets: ["arabic", "latin"],
   display: "swap",
   weight: ["300", "400", "500", "600", "700"],
 });
 
+// Cairo - For headings and emphasized text
+const cairo = Cairo({
+  subsets: ["arabic", "latin"],
+  display: "swap",
+  weight: ["400", "600", "700", "900"],
+  variable: "--font-cairo",
+});
+
+// Amiri - For Quranic text (elegant, traditional)
+const amiri = Amiri({
+  subsets: ["arabic", "latin"],
+  display: "swap",
+  weight: ["400", "700"],
+  variable: "--font-amiri",
+});
+
+// Orbitron - For numbers and digital displays
 const orbitron = Orbitron({
   subsets: ["latin"],
   variable: "--font-orbitron",
@@ -35,8 +53,8 @@ export const metadata: Metadata = {
       {
         url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='2' y='12' width='60' height='40' rx='6' fill='%23020617'/%3E%3Crect x='8' y='18' width='28' height='28' rx='4' fill='%23F6C100'/%3E%3Cg fill='%23020617'%3E%3Crect x='40' y='20' width='14' height='20' rx='2'/%3E%3Ccircle cx='47' cy='30' r='3.5' fill='%23F6C100'/%3E%3C/g%3E%3Crect x='10' y='22' width='6' height='6' rx='1' fill='%23020617'/%3E%3Crect x='10' y='30' width='6' height='6' rx='1' fill='%23020617'/%3E%3Crect x='18' y='22' width='6' height='14' rx='1' fill='%23020617'/%3E%3Crect x='6' y='8' width='40' height='2' rx='1' fill='%23020617' transform='rotate(20 6 8)'/%3E%3C/svg%3E",
         type: "image/svg+xml",
-        sizes: "64x64"
-      }
+        sizes: "64x64",
+      },
     ],
     shortcut: "/icon-radio.svg",
     apple: "/icon-radio.svg",
@@ -102,25 +120,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          rel="preload"
-          href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap"
-          as="style"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
       <body
-        className={`${readexPro.className} ${orbitron.variable} antialiased`}
+        className={`${readexPro.className} ${orbitron.variable} ${cairo.variable} ${amiri.variable} antialiased`}
       >
         <ErrorBoundary>{children}</ErrorBoundary>
         <Analytics />
