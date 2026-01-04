@@ -4,8 +4,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // No basePath needed for custom domain GitHub Pages deployment
   trailingSlash: true,
+  // Note: Headers don't work with static export
+  // Security headers should be configured in hosting platform (GitHub Pages, Vercel, etc.)
 };
 
 export default nextConfig;

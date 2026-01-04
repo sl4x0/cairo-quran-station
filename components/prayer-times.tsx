@@ -250,7 +250,7 @@ export function PrayerTimes() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 1.4, duration: 0.8 }}
     >
-      <div className="bg-black/20 backdrop-blur-3xl border border-white/10 rounded-2xl md:rounded-3xl p-6 md:p-8 glow-gold">
+      <div className="bg-black/20 backdrop-blur-3xl border border-white/10 rounded-2xl md:rounded-3xl p-6 md:p-8 elegant-shadow">
         <motion.div
           className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6"
           initial={{ scale: 0.8, opacity: 0 }}
@@ -260,7 +260,7 @@ export function PrayerTimes() {
           aria-label="التاريخ الهجري والميلادي"
         >
           {/* Hijri date first (Islamic calendar priority) */}
-          <div className="glass-panel px-5 py-2.5 rounded-full border border-emerald-500/30 glow-teal">
+          <div className="glass-panel px-5 py-2.5 rounded-full border border-emerald-500/30 elegant-shadow-teal">
             <span className="text-base md:text-lg text-emerald-300 font-readex font-semibold drop-shadow-[0_0_8px_rgba(16,185,129,0.4)]">
               {hijriDate}
             </span>
@@ -283,7 +283,7 @@ export function PrayerTimes() {
           aria-atomic="true"
           aria-label={`الوقت المتبقي حتى صلاة ${nextPrayer.name}`}
         >
-          <div className="glass-panel px-4 sm:px-6 md:px-10 py-4 md:py-5 rounded-2xl md:rounded-3xl glow-gold border-2 border-primary/40 bg-gradient-to-br from-primary/5 to-transparent w-full max-w-md md:max-w-none">
+          <div className="glass-panel px-4 sm:px-6 md:px-10 py-4 md:py-5 rounded-2xl md:rounded-3xl elegant-shadow border-2 border-primary/40 bg-gradient-to-br from-primary/5 to-transparent w-full max-w-md md:max-w-none">
             <div className="flex flex-col gap-3 items-center">
               <div className="flex items-center gap-2 text-center flex-wrap justify-center">
                 <span className="text-xs sm:text-sm md:text-base text-foreground/70 whitespace-nowrap font-medium">
@@ -317,7 +317,7 @@ export function PrayerTimes() {
                 key={prayer.key}
                 className={`bg-black/30 backdrop-blur-xl rounded-2xl p-6 h-40 transition-all duration-300 ${
                   isNext
-                    ? "border-2 border-primary glow-gold bg-gradient-to-br from-primary/10 to-transparent shadow-[0_0_30px_rgba(245,158,11,0.2)]"
+                    ? "border-2 border-primary elegant-shadow bg-gradient-to-br from-primary/10 to-transparent shadow-lg"
                     : "border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20"
                 }`}
                 initial={{ scale: 0, opacity: 0, rotateY: 90 }}
@@ -428,7 +428,7 @@ export function PrayerTimes() {
                   data-active={isNext ? "true" : "false"}
                   className={`bg-black/30 backdrop-blur-xl rounded-2xl p-5 transition-all duration-300 flex-shrink-0 snap-center w-[150px] min-h-[140px] active:scale-95 ${
                     isNext
-                      ? "border-2 border-primary glow-gold bg-gradient-to-br from-primary/10 to-transparent shadow-[0_0_25px_rgba(245,158,11,0.2)]"
+                      ? "border-2 border-primary elegant-shadow bg-gradient-to-br from-primary/10 to-transparent shadow-lg"
                       : "border border-white/10 bg-white/5"
                   }`}
                   initial={{ scale: 0, opacity: 0, rotateY: 90 }}

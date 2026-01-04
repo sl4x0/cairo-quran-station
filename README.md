@@ -11,29 +11,32 @@ A modern, accessible Islamic radio streaming web application built with Next.js 
 
 ### 🎙️ Core Features
 
-- **Live Quran Streaming** - High-quality audio stream from Cairo
-- **Real-Time Listener Count** - Live listener statistics with automatic updates
-- **Prayer Times** - Automatic display of Cairo prayer times
-- **Ayah of the Day** - Random Quranic verse with translation
-- **Friday Special** - Surah Al-Kahf modal on Fridays
-- **PWA Support** - Install as a mobile/desktop app
+- **Live Quran Streaming** - High-quality 128kbps audio stream from Cairo
+- **Prayer Times** - Real-time Cairo prayer times with countdown to next prayer
+- **Ayah of the Day** - Random Quranic verse with Arabic tafsir (Al-Muyassar)
+- **Friday Special** - Surah Al-Kahf modal with full text on Fridays
+- **PWA Support** - Install as a mobile/desktop app with offline capability
+- **Media Session API** - Lock screen controls and metadata on mobile devices
 
 ### 🎨 UI/UX Features
 
-- **Adaptive Theme** - Background changes based on time of day (Dawn, Day, Sunset, Night)
-- **Smooth Animations** - Framer Motion powered transitions
-- **RTL Support** - Full right-to-left Arabic layout
-- **Responsive Design** - Mobile-first, works on all devices
-- **Accessibility** - WCAG 2.2 Level AA compliant
+- **Prayer Time-Based Themes** - Background changes based on Cairo prayer times (Fajr, Sunrise, Asr, Maghrib, Isha)
+- **Smooth Animations** - Optimized Framer Motion transitions with reduced motion support
+- **Enhanced Arabic Typography** - Multi-font stack (Cairo for headings, Amiri for Quran, Readex Pro for UI)
+- **RTL Support** - Full right-to-left Arabic layout with proper text rendering
+- **Responsive Design** - Mobile-first design with touch-optimized controls
+- **Keyboard Controls** - Space for play/pause, Arrow keys for volume
+- **Accessibility** - WCAG 2.2 Level AA compliant with screen reader support
 
 ### 🔧 Technical Features
 
-- **Static Export** - Pre-rendered for CDN deployment
-- **Type Safety** - Full TypeScript coverage
-- **Security Headers** - CSP, X-Frame-Options, etc.
-- **SEO Optimized** - OpenGraph, Twitter Cards, Sitemap
-- **Performance** - Optimized bundle size and lazy loading
-- **Error Handling** - Graceful degradation with error boundaries
+- **Static Export** - Pre-rendered for CDN deployment (GitHub Pages)
+- **Type Safety** - Full TypeScript 5.x coverage with strict mode
+- **Automated Testing** - Vitest unit tests, React Testing Library, Playwright E2E
+- **Performance Optimized** - Lazy loading with Suspense, reduced animations, 0.2s transitions
+- **SEO Optimized** - OpenGraph, Twitter Cards, Sitemap, Robots.txt
+- **Error Handling** - Error boundaries, retry logic with exponential backoff
+- **CI/CD** - Automated deployment via GitHub Actions
 
 ---
 
@@ -77,10 +80,15 @@ A modern, accessible Islamic radio streaming web application built with Next.js 
 ### Available Scripts
 
 ```bash
-npm run dev      # Start development server (http://localhost:3000)
-npm run build    # Build for production (static export to /out)
-npm run start    # Start production server (not needed for static export)
-npm run lint     # Run ESLint to check code quality
+npm run dev           # Start development server (http://localhost:3000)
+npm run build         # Build for production (static export to /out)
+npm run start         # Start production server (not needed for static export)
+npm run lint          # Run ESLint to check code quality
+npm run type-check    # Run TypeScript type checking
+npm test              # Run Vitest unit tests
+npm run test:ui       # Open Vitest UI for interactive testing
+npm run test:coverage # Generate test coverage report
+npm run test:e2e      # Run Playwright E2E tests
 ```
 
 ### Project Structure
@@ -126,10 +134,23 @@ cairo-quran-station/
 
 ## 🗺️ Roadmap
 
-- [ ] Add multi-language support (English, French)
-- [x] **Implement real-time listener count** ✅
-- [ ] Create mobile apps (React Native)
-- [ ] Add user preferences (save volume, etc.)
-- [ ] Implement offline mode with service worker
-- [ ] Add share functionality
-- [ ] Create browser extension
+### Completed ✅
+
+- [x] Prayer time-based adaptive themes
+- [x] Arabic tafsir for Ayah of the Day
+- [x] Keyboard controls (Space, Arrow keys)
+- [x] Automated testing infrastructure (Vitest, Playwright)
+- [x] Performance optimizations (lazy loading, Suspense)
+- [x] Enhanced Arabic typography with multiple fonts
+- [x] Media Session API for lock screen controls
+
+### Planned
+
+- [ ] HTTPS certificate resolution (currently in progress with GitHub)
+- [ ] Offline mode with service worker and caching
+- [ ] User preferences (save volume, favorite reciters)
+- [ ] Additional tafsir sources (Ibn Kathir, Al-Jalalayn)
+- [ ] Share functionality with social media integration
+- [ ] Multi-language support (English, French, Urdu)
+- [ ] Mobile apps (React Native)
+- [ ] Browser extension for quick access

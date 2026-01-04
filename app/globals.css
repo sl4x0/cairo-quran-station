@@ -4,34 +4,35 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Custom Neo-Cairo 2050 theme with void blue/black backgrounds, electric gold, and deep teal */
+/* Elegant Islamic Design - Warm & Sophisticated */
 :root {
-  --void-black: #020617;
-  --deep-teal: #0d9488;
-  --electric-gold: #f59e0b;
-  --holographic-glass: rgba(255, 255, 255, 0.05);
-  --glow-border: rgba(255, 255, 255, 0.1);
+  --rich-navy: #1a2332;
+  --deep-teal: #0d7377;
+  --warm-gold: #d4af37;
+  --soft-cream: #f5f5dc;
+  --elegant-glass: rgba(255, 255, 255, 0.08);
+  --subtle-border: rgba(212, 175, 55, 0.15);
 
-  --background: #020617;
-  --foreground: #f8fafc;
-  --card: rgba(255, 255, 255, 0.03);
-  --card-foreground: #f8fafc;
-  --popover: rgba(15, 23, 42, 0.95);
-  --popover-foreground: #f8fafc;
-  --primary: #f59e0b;
-  --primary-foreground: #020617;
-  --secondary: #0d9488;
-  --secondary-foreground: #f8fafc;
-  --muted: rgba(255, 255, 255, 0.1);
-  --muted-foreground: rgba(248, 250, 252, 0.6);
-  --accent: #0d9488;
-  --accent-foreground: #f8fafc;
-  --destructive: #ef4444;
-  --destructive-foreground: #f8fafc;
-  --border: rgba(255, 255, 255, 0.1);
-  --input: rgba(255, 255, 255, 0.1);
-  --ring: #f59e0b;
-  --radius: 1.5rem;
+  --background: #1a2332;
+  --foreground: #f5f5dc;
+  --card: rgba(255, 255, 255, 0.05);
+  --card-foreground: #f5f5dc;
+  --popover: rgba(26, 35, 50, 0.98);
+  --popover-foreground: #f5f5dc;
+  --primary: #d4af37;
+  --primary-foreground: #1a2332;
+  --secondary: #0d7377;
+  --secondary-foreground: #f5f5dc;
+  --muted: rgba(245, 245, 220, 0.15);
+  --muted-foreground: rgba(245, 245, 220, 0.7);
+  --accent: #8b4513;
+  --accent-foreground: #f5f5dc;
+  --destructive: #c53030;
+  --destructive-foreground: #f5f5dc;
+  --border: rgba(212, 175, 55, 0.2);
+  --input: rgba(245, 245, 220, 0.1);
+  --ring: #d4af37;
+  --radius: 1rem;
 }
 
 .dark {
@@ -167,148 +168,70 @@
   }
 }
 
-/* Custom animations for futuristic effects */
+/* Elegant animations - subtle and refined */
 @keyframes float {
   0%,
   100% {
     transform: translateY(0px);
   }
   50% {
-    transform: translateY(-20px);
+    transform: translateY(-10px);
   }
 }
 
-@keyframes pulse-glow {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-@keyframes rotate-slow {
+@keyframes fade-in {
   from {
-    transform: rotate(0deg);
+    opacity: 0;
   }
   to {
-    transform: rotate(360deg);
+    opacity: 1;
   }
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: -1000px 0;
+@keyframes slide-up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
   }
-  100% {
-    background-position: 1000px 0;
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
-}
-
-@keyframes glow-pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 20px rgba(245, 158, 11, 0.2),
-      0 0 40px rgba(245, 158, 11, 0.1), inset 0 0 20px rgba(255, 255, 255, 0.05);
-  }
-  50% {
-    box-shadow: 0 0 30px rgba(245, 158, 11, 0.4),
-      0 0 60px rgba(245, 158, 11, 0.2), inset 0 0 30px rgba(255, 255, 255, 0.1);
-  }
-}
-
-@keyframes glow-pulse-emerald {
-  0%,
-  100% {
-    box-shadow: 0 0 20px rgba(52, 211, 153, 0.2),
-      0 0 40px rgba(52, 211, 153, 0.1), inset 0 0 20px rgba(255, 255, 255, 0.05);
-  }
-  50% {
-    box-shadow: 0 0 30px rgba(52, 211, 153, 0.4),
-      0 0 60px rgba(52, 211, 153, 0.2), inset 0 0 30px rgba(255, 255, 255, 0.1);
-  }
-}
-
-@keyframes border-flow {
-  0% {
-    border-image-source: linear-gradient(
-      135deg,
-      rgba(245, 158, 11, 0.5) 0%,
-      transparent 50%,
-      rgba(245, 158, 11, 0.5) 100%
-    );
-  }
-  50% {
-    border-image-source: linear-gradient(
-      135deg,
-      transparent 0%,
-      rgba(245, 158, 11, 0.8) 50%,
-      transparent 100%
-    );
-  }
-  100% {
-    border-image-source: linear-gradient(
-      135deg,
-      rgba(245, 158, 11, 0.5) 0%,
-      transparent 50%,
-      rgba(245, 158, 11, 0.5) 100%
-    );
-  }
-}
-
-.animate-glow-pulse {
-  animation: glow-pulse 3s ease-in-out infinite;
-}
-
-.animate-glow-pulse-emerald {
-  animation: glow-pulse-emerald 3s ease-in-out infinite;
 }
 
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
 
-.animate-pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
+.animate-fade-in {
+  animation: fade-in 0.5s ease-in-out;
 }
 
-.animate-rotate-slow {
-  animation: rotate-slow 60s linear infinite;
-}
-
-.animate-shimmer {
-  animation: shimmer 3s linear infinite;
+.animate-slide-up {
+  animation: slide-up 0.4s ease-out;
 }
 
 /* ============================================
-   UNIFIED GLASS MORPHISM DESIGN SYSTEM
+   ELEGANT ISLAMIC GLASS DESIGN SYSTEM
    ============================================
-   Consistent, accessible, and beautiful glass panels
-   Used across entire application for visual harmony
+   Refined, accessible, beautiful glass panels
+   Warm tones, subtle shadows, elegant borders
    ============================================ */
 
-/* Base Glass Panel - Primary component (used 20+ times) */
+/* Base Glass Panel - Primary component */
 .glass-panel {
-  /* Enhanced multi-layer background for depth */
   background: linear-gradient(
     135deg,
     rgba(255, 255, 255, 0.08) 0%,
     rgba(255, 255, 255, 0.04) 50%,
     rgba(255, 255, 255, 0.02) 100%
   );
-
-  /* Superior blur with saturation boost */
-  backdrop-filter: blur(60px) saturate(150%);
-  -webkit-backdrop-filter: blur(60px) saturate(150%);
-
-  /* Subtle border with inner glow */
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
-
-  /* Ensure text contrast for accessibility (WCAG AA) */
-  color: rgba(248, 250, 252, 0.95);
+  backdrop-filter: blur(20px) saturate(120%);
+  -webkit-backdrop-filter: blur(20px) saturate(120%);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 0 rgba(212, 175, 55, 0.1);
+  color: rgba(245, 245, 220, 0.95);
 }
 
 /* Elevated Glass Panel - For important elements */
@@ -319,14 +242,14 @@
     rgba(255, 255, 255, 0.06) 50%,
     rgba(255, 255, 255, 0.03) 100%
   );
-  backdrop-filter: blur(80px) saturate(180%);
-  -webkit-backdrop-filter: blur(80px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 12px 48px 0 rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.18), 0 0 80px rgba(245, 158, 11, 0.08);
+  backdrop-filter: blur(30px) saturate(130%);
+  -webkit-backdrop-filter: blur(30px) saturate(130%);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  box-shadow: 0 12px 36px 0 rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 0 rgba(212, 175, 55, 0.15);
 }
 
-/* Premium header glass effect with multi-layer depth */
+/* Premium header glass effect */
 .glass-header {
   background: linear-gradient(
     135deg,
@@ -334,39 +257,39 @@
     rgba(255, 255, 255, 0.05) 50%,
     rgba(255, 255, 255, 0.03) 100%
   );
-  backdrop-filter: blur(100px) saturate(200%);
-  -webkit-backdrop-filter: blur(100px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.15), 0 0 60px rgba(245, 158, 11, 0.08);
+  backdrop-filter: blur(40px) saturate(140%);
+  -webkit-backdrop-filter: blur(40px) saturate(140%);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 0 rgba(212, 175, 55, 0.12);
 }
 
-/* Enhanced button glass for better touch feedback */
+/* Enhanced button glass */
 .glass-button {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(40px) saturate(130%);
-  -webkit-backdrop-filter: blur(40px) saturate(130%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(212, 175, 55, 0.08);
+  backdrop-filter: blur(12px) saturate(110%);
+  -webkit-backdrop-filter: blur(12px) saturate(110%);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(212, 175, 55, 0.15);
+  transition: all 0.3s ease;
 }
 
 .glass-button:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.28);
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  background: rgba(212, 175, 55, 0.15);
+  border-color: rgba(212, 175, 55, 0.35);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(212, 175, 55, 0.2);
 }
 
 .glass-button:active {
   transform: translateY(0);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(212, 175, 55, 0.12);
 }
 
-/* Added emerald-specific glass for Friday mode */
+/* Friday-specific glass */
 .glass-panel-emerald {
   background: linear-gradient(
     135deg,
@@ -374,70 +297,37 @@
     rgba(16, 185, 129, 0.04) 50%,
     rgba(16, 185, 129, 0.02) 100%
   );
-  backdrop-filter: blur(60px) saturate(150%);
-  -webkit-backdrop-filter: blur(60px) saturate(150%);
+  backdrop-filter: blur(20px) saturate(120%);
+  -webkit-backdrop-filter: blur(20px) saturate(120%);
   border: 1px solid rgba(16, 185, 129, 0.2);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 0 rgba(16, 185, 129, 0.15), 0 0 40px rgba(16, 185, 129, 0.12);
+  box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 0 rgba(16, 185, 129, 0.12);
 }
 
 /* ============================================
-   UNIFIED GLOW & SHADOW SYSTEM
+   ELEGANT SHADOW SYSTEM
    ============================================
-   Consistent ambient lighting effects
-   Matches glass-panel design system
+   Subtle, refined shadows instead of neon glows
    ============================================ */
 
-/* Primary Gold Glow - For day/regular theme */
-.glow-gold {
-  box-shadow: 0 0 40px rgba(245, 158, 11, 0.3),
-    0 0 80px rgba(245, 158, 11, 0.18), 0 0 120px rgba(245, 158, 11, 0.1),
-    inset 0 0 40px rgba(245, 158, 11, 0.08);
+.elegant-shadow {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(212, 175, 55, 0.1);
 }
 
-/* Secondary Teal Glow - For accents */
-.glow-teal {
-  box-shadow: 0 0 40px rgba(13, 148, 136, 0.3),
-    0 0 80px rgba(13, 148, 136, 0.18), 0 0 120px rgba(13, 148, 136, 0.1),
-    inset 0 0 40px rgba(13, 148, 136, 0.08);
+.elegant-shadow-lg {
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25),
+    0 4px 12px rgba(212, 175, 55, 0.12);
 }
 
-/* White Glow - For subtle highlights */
-.glow-white {
-  box-shadow: 0 0 40px rgba(255, 255, 255, 0.2),
-    0 0 80px rgba(255, 255, 255, 0.12), 0 0 120px rgba(255, 255, 255, 0.06),
-    inset 0 0 40px rgba(255, 255, 255, 0.05);
+.elegant-shadow-teal {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(13, 115, 119, 0.15);
 }
 
-/* Emerald Glow - For Friday special mode */
-.glow-emerald {
-  box-shadow: 0 0 40px rgba(16, 185, 129, 0.3),
-    0 0 80px rgba(16, 185, 129, 0.18), 0 0 120px rgba(16, 185, 129, 0.1),
-    inset 0 0 40px rgba(16, 185, 129, 0.08);
+.elegant-shadow-emerald {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(16, 185, 129, 0.15);
 }
 
-/* Purple Glow - For dawn theme */
-.glow-purple {
-  box-shadow: 0 0 40px rgba(168, 85, 247, 0.3),
-    0 0 80px rgba(168, 85, 247, 0.18), 0 0 120px rgba(168, 85, 247, 0.1),
-    inset 0 0 40px rgba(168, 85, 247, 0.08);
-}
-
-/* Orange Glow - For sunset theme */
-.glow-orange {
-  box-shadow: 0 0 40px rgba(249, 115, 22, 0.3),
-    0 0 80px rgba(249, 115, 22, 0.18), 0 0 120px rgba(249, 115, 22, 0.1),
-    inset 0 0 40px rgba(249, 115, 22, 0.08);
-}
-
-/* Blue Glow - For night theme */
-.glow-blue {
-  box-shadow: 0 0 40px rgba(59, 130, 246, 0.3),
-    0 0 80px rgba(59, 130, 246, 0.18), 0 0 120px rgba(59, 130, 246, 0.1),
-    inset 0 0 40px rgba(59, 130, 246, 0.08);
-}
-
-/* Added shimmer animation specifically for emerald Friday card */
+/* Subtle shimmer for Friday card */
 @keyframes shimmer-emerald {
   0% {
     background-position: -1000px 0;
@@ -451,7 +341,7 @@
   background: linear-gradient(
     90deg,
     rgba(16, 185, 129, 0.05) 0%,
-    rgba(52, 211, 153, 0.15) 50%,
+    rgba(52, 211, 153, 0.12) 50%,
     rgba(16, 185, 129, 0.05) 100%
   );
   background-size: 200% 100%;
@@ -531,7 +421,7 @@ input[type="range"]::-webkit-slider-thumb {
   background: var(--primary); /* Gold color */
   border: 3px solid var(--primary);
   cursor: pointer;
-  box-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
   transition: all 0.2s ease;
   margin-top: calc(
     (1.5rem - 0.75rem) / -2
@@ -540,7 +430,7 @@ input[type="range"]::-webkit-slider-thumb {
 
 input[type="range"]::-webkit-slider-thumb:hover {
   transform: scale(1.1);
-  box-shadow: 0 0 30px rgba(245, 158, 11, 0.8);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
 }
 
 /* Firefox */
@@ -558,13 +448,13 @@ input[type="range"]::-moz-range-thumb {
   background: var(--primary);
   border: 3px solid var(--primary);
   cursor: pointer;
-  box-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
   transition: all 0.2s ease;
 }
 
 input[type="range"]::-moz-range-thumb:hover {
   transform: scale(1.1);
-  box-shadow: 0 0 30px rgba(245, 158, 11, 0.8);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
 }
 
 /* Focus state for accessibility */

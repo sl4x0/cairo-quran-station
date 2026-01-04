@@ -47,11 +47,31 @@ TESTING.md
 *.tsbuildinfo
 next-env.d.ts
 
+# test results and temp files
+e2e/
+test-results/
+playwright-report/
+.playwright/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
 # Backup and temporary files
 *.backup
-*-NEW.*
-*-OLD.*
-FIXES_APPLIED.md
+*.bak
+*~
+*.tmp
+*.temp
+
+# Test artifacts
+/playwright-report/
+/test-results/
+/coverage/
 
 # Build info
 tsconfig.tsbuildinfo

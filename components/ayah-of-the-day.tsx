@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { RefreshCw, Copy, Check } from "lucide-react";
+import { RefreshCw, Copy, Check, Share2 } from "lucide-react";
 import { retryWithBackoff, fetchWithTimeout } from "@/lib/api-utils";
+import { AyahShare } from "./ayah-share";
 
 interface AyahData {
   text: string;
@@ -15,49 +16,82 @@ interface AyahData {
   };
 }
 
+interface TafsirData {
+  text: string;
+}
+
 interface AyahResponse {
   data: AyahData[];
+}
+
+interface TafsirResponse {
+  data: TafsirData;
 }
 
 export function AyahOfTheDay() {
   const [ayahData, setAyahData] = useState<{
     arabic: string;
-    english: string;
+    tafsir: string;
     reference: string;
+    surahName: string;
+    ayahNumber: number;
   } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isCopied, setIsCopied] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   const fetchAyah = async () => {
     setIsRefreshing(true);
     setError(null);
     try {
       const randomAyah = Math.floor(Math.random() * 6236) + 1;
-      const data: AyahResponse = await retryWithBackoff(
+
+      // Fetch Arabic text
+      const ayahResponse: AyahResponse = await retryWithBackoff(
         async () => {
           const response = await fetchWithTimeout(
-            `https://api.alquran.cloud/v1/ayah/${randomAyah}/editions/quran-uthmani,en.asad`,
+            `https://api.alquran.cloud/v1/ayah/${randomAyah}/quran-uthmani`,
             {},
             10000
           );
-
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
-
           return await response.json();
         },
         3,
         1000
       );
 
-      if (data.data && data.data.length >= 2) {
+      // Fetch Arabic tafsir (Al-Tafsir Al-Muyassar - simplified interpretation)
+      const tafsirResponse: TafsirResponse = await retryWithBackoff(
+        async () => {
+          const response = await fetchWithTimeout(
+            `https://api.alquran.cloud/v1/ayah/${randomAyah}/ar.muyassar`,
+            {},
+            10000
+          );
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return await response.json();
+        },
+        3,
+        1000
+      );
+
+      if (ayahResponse.data && tafsirResponse.data) {
+        const ayahInfo = Array.isArray(ayahResponse.data)
+          ? ayahResponse.data[0]
+          : ayahResponse.data;
         setAyahData({
-          arabic: data.data[0].text,
-          english: data.data[1].text,
-          reference: `${data.data[0].surah.name} - ${data.data[0].surah.englishName} (${data.data[0].surah.number}:${data.data[0].numberInSurah})`,
+          arabic: ayahInfo.text,
+          tafsir: tafsirResponse.data.text,
+          reference: `${ayahInfo.surah.name} - ${ayahInfo.surah.englishName} (${ayahInfo.surah.number}:${ayahInfo.numberInSurah})`,
+          surahName: ayahInfo.surah.name,
+          ayahNumber: ayahInfo.numberInSurah,
         });
       }
     } catch (error) {
@@ -68,9 +102,11 @@ export function AyahOfTheDay() {
       setAyahData({
         arabic:
           "ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ ۚ لَا تَأْخُذُهُۥ سِنَةٌۭ وَلَا نَوْمٌۭ ۚ لَّهُۥ مَا فِى ٱلسَّمَٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ۗ مَن ذَا ٱلَّذِى يَشْفَعُ عِندَهُۥٓ إِلَّا بِإِذْنِهِۦ",
-        english:
-          "Allah - there is no deity except Him, the Ever-Living, the Sustainer of existence. Neither drowsiness overtakes Him nor sleep. To Him belongs whatever is in the heavens and whatever is on the earth.",
+        tafsir:
+          "الله المتفرد بالألوهية، المتصف بصفات الكمال المنزه عن النقائص، الحي الذي لا يموت، القائم بتدبير خلقه، لا يغلبه نعاس ولا نوم، له ملك السماوات والأرض وما فيهما، لا يشفع أحد عنده إلا بإذنه.",
         reference: "البقرة - Al-Baqarah (2:255)",
+        surahName: "البقرة",
+        ayahNumber: 255,
       });
     } finally {
       setIsLoading(false);
@@ -85,9 +121,8 @@ export function AyahOfTheDay() {
   const handleCopy = async () => {
     if (!ayahData) return;
     try {
-      await navigator.clipboard.writeText(
-        `${ayahData.arabic}\n\n${ayahData.english}\n\n${ayahData.reference}`
-      );
+      const textToCopy = `${ayahData.arabic}\n\nالتفسير:\n${ayahData.tafsir}\n\n${ayahData.reference}`;
+      await navigator.clipboard.writeText(textToCopy);
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
     } catch (error) {
@@ -100,7 +135,7 @@ export function AyahOfTheDay() {
   if (isLoading) {
     return (
       <section className="w-full" aria-label="آية اليوم - جاري التحميل">
-        <div className="glass-panel rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 lg:p-7 glow-teal">
+        <div className="glass-panel rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 lg:p-7 elegant-shadow-teal">
           <div
             className="space-y-4 sm:space-y-5"
             role="status"
@@ -130,7 +165,7 @@ export function AyahOfTheDay() {
   return (
     <section className="w-full" aria-label="آية اليوم">
       <article
-        className="glass-panel rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 lg:p-7 glow-teal border border-white/10 shadow-2xl"
+        className="glass-panel rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 lg:p-7 elegant-shadow-teal border border-white/10 shadow-2xl"
         role="article"
         aria-labelledby="ayah-title"
       >
@@ -156,6 +191,24 @@ export function AyahOfTheDay() {
             role="group"
             aria-label="إجراءات الآية"
           >
+            <motion.button
+              onClick={() => setShowShareModal(true)}
+              disabled={isRefreshing}
+              className="glass-panel p-2.5 sm:p-3 rounded-full hover:bg-white/15 active:bg-white/20 transition-all duration-200 group disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2 focus:ring-offset-transparent"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              initial={{ x: 20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.1, duration: 0.4 }}
+              aria-label="مشاركة الآية"
+              title="مشاركة الآية"
+            >
+              <Share2
+                className="w-5 h-5 text-muted-foreground group-hover:text-secondary transition-colors"
+                aria-hidden="true"
+              />
+            </motion.button>
+
             <motion.button
               onClick={handleCopy}
               disabled={isCopied || isRefreshing}
@@ -243,22 +296,33 @@ export function AyahOfTheDay() {
           </p>
         </motion.div>
 
-        {/* English translation */}
+        {/* Arabic Tafsir (Commentary) */}
         <motion.div
           className="mb-3 sm:mb-4 md:mb-4"
           initial={{ y: 15, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.35, duration: 0.5 }}
-          key={ayahData.english}
+          key={ayahData.tafsir}
         >
-          <p
-            dir="ltr"
-            lang="en"
-            className="text-sm sm:text-base md:text-lg text-slate-100 leading-relaxed max-w-4xl mx-auto text-center px-1 sm:px-2 font-sans"
-            style={{ textShadow: "0 1px 3px rgba(0, 0, 0, 0.3)" }}
-          >
-            {ayahData.english}
-          </p>
+          <div className="glass-panel rounded-xl p-3 sm:p-4 border border-secondary/10 bg-gradient-to-br from-secondary/5 to-transparent">
+            <h3
+              className="text-xs sm:text-sm text-secondary font-semibold mb-2 text-center"
+              lang="ar"
+            >
+              التفسير الميسر
+            </h3>
+            <p
+              dir="rtl"
+              lang="ar"
+              className="text-sm sm:text-base md:text-lg text-slate-100 leading-relaxed max-w-4xl mx-auto text-right px-1 sm:px-2"
+              style={{
+                fontFamily: "'Readex Pro', 'Cairo', sans-serif",
+                textShadow: "0 1px 3px rgba(0, 0, 0, 0.3)",
+              }}
+            >
+              {ayahData.tafsir}
+            </p>
+          </div>
         </motion.div>
 
         {/* Reference */}
@@ -294,6 +358,18 @@ export function AyahOfTheDay() {
           )}
         </AnimatePresence>
       </article>
+
+      {/* Share Modal */}
+      {ayahData && (
+        <AyahShare
+          ayahText={ayahData.arabic}
+          surahName={ayahData.surahName}
+          ayahNumber={ayahData.ayahNumber}
+          tafsir={ayahData.tafsir}
+          isOpen={showShareModal}
+          onClose={() => setShowShareModal(false)}
+        />
+      )}
     </section>
   );
 }

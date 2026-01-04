@@ -37,7 +37,7 @@ export function Header({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const glowClass = isFriday ? "glow-emerald" : "glow-gold";
+  const shadowClass = isFriday ? "elegant-shadow-emerald" : "elegant-shadow";
   const textColorClass = isFriday ? "text-emerald-400" : "text-primary";
   const gradientFrom = isFriday ? "from-emerald-400" : "from-primary";
   const gradientVia = isFriday ? "via-emerald-300" : "via-yellow-300";
@@ -146,8 +146,8 @@ export function Header({
   return (
     <motion.header
       className={`w-full max-w-7xl mx-auto glass-header rounded-2xl md:rounded-3xl lg:rounded-[2rem] mb-8 md:mb-12 overflow-hidden transition-all duration-500 ${
-        isFriday ? "animate-glow-pulse-emerald" : "animate-glow-pulse"
-      } ${isScrolled ? "shadow-2xl scale-[0.98]" : "shadow-xl"}`}
+        isScrolled ? "shadow-2xl scale-[0.98]" : "shadow-xl"
+      }`}
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.8, ease: [0.6, -0.05, 0.01, 0.99] }}
@@ -176,7 +176,7 @@ export function Header({
         >
           <motion.button
             onClick={onInfoClick}
-            className={`glass-button min-w-[44px] min-h-[44px] w-11 h-11 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center ${glowClass} group relative overflow-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-amber-500 transition-all duration-300`}
+            className={`glass-button min-w-[44px] min-h-[44px] w-11 h-11 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center ${shadowClass} group relative overflow-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-amber-500 transition-all duration-300`}
             aria-label="فتح معلومات الإذاعة"
             aria-expanded={showInfoModal}
             aria-controls="info-modal"
@@ -252,6 +252,56 @@ export function Header({
 
         {/* Status Indicators - Right Side */}
         <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
+          {/* YouTube Quran Playlist Button */}
+          <motion.a
+            href="https://youtube.com/playlist?list=PLm7IU41uzPdgXijvj4aukKwlvzeODO-T4&si=_EIfV-FOVOzDdGFY"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="glass-button px-3 md:px-4 py-2 md:py-2.5 rounded-full flex items-center gap-2 min-h-[44px] relative overflow-hidden group focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-amber-500 transition-all duration-300"
+            initial={{ scale: 0, opacity: 0, x: 50 }}
+            animate={{ scale: 1, opacity: 1, x: 0 }}
+            transition={{ delay: 0.35, duration: 0.6, ease: "backOut" }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            aria-label="سماع القرآن الكريم على يوتيوب"
+            title="سماع القرآن الكريم"
+          >
+            {/* YouTube glow effect */}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-red-500/0 via-red-500/10 to-red-500/0 rounded-full"
+              animate={{
+                opacity: [0, 0.3, 0],
+              }}
+              transition={{
+                duration: 2.5,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+
+            {/* YouTube icon */}
+            <motion.svg
+              className="w-5 h-5 md:w-6 md:h-6 text-red-500 relative z-10 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              whileHover={{ scale: 1.1 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            >
+              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+            </motion.svg>
+
+            {/* Text - hidden on smallest screens, shown on sm+ */}
+            <motion.span
+              className="hidden sm:block text-sm md:text-base font-medium text-foreground/90 relative z-10 whitespace-nowrap"
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.55 }}
+            >
+              سماع القرآن
+            </motion.span>
+          </motion.a>
+
           {/* Time Phase Indicator */}
           <motion.div
             className="glass-button px-3 md:px-4 py-2 md:py-2.5 rounded-full flex items-center gap-2 md:gap-2.5 min-h-[44px] relative overflow-hidden group cursor-default"

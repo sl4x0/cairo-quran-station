@@ -1,29 +1,38 @@
 export type TimePhase = "dawn" | "day" | "sunset" | "night";
 
-// Prayer times for Cairo (approximate, used for theme calculation)
-// Fajr ~04:30, Sunrise ~06:00, Asr ~15:15, Maghrib ~17:45, Isha ~19:15
-const CAIRO_PRAYER_TIMES = {
-  fajr: 4.5, // 04:30
-  sunrise: 6.0, // 06:00 (15-20 min after Fajr)
-  asr: 15.25, // 15:15
-  maghrib: 17.75, // 17:45
-  isha: 19.25, // 19:15
-};
+function timeToHours(timeStr: string): number {
+  const [hours, minutes] = timeStr.split(":").map(Number);
+  return hours + minutes / 60;
+}
 
-export function getTimePhase(): TimePhase {
+export function getTimePhase(prayerTimes?: {
+  Fajr: string;
+  Sunrise?: string;
+  Asr: string;
+  Maghrib: string;
+  Isha: string;
+}): TimePhase {
   const now = new Date();
-  const hour = now.getHours() + now.getMinutes() / 60;
+  const currentHour = now.getHours() + now.getMinutes() / 60;
+
+  // Use real prayer times if available, otherwise fallback to approximations
+  const fajr = prayerTimes ? timeToHours(prayerTimes.Fajr) : 4.5;
+  const sunrise = prayerTimes?.Sunrise
+    ? timeToHours(prayerTimes.Sunrise)
+    : fajr + 1.5;
+  const asr = prayerTimes ? timeToHours(prayerTimes.Asr) : 15.25;
+  const maghrib = prayerTimes ? timeToHours(prayerTimes.Maghrib) : 17.75;
 
   // Dawn: From Fajr to Sunrise
-  if (hour >= CAIRO_PRAYER_TIMES.fajr && hour < CAIRO_PRAYER_TIMES.sunrise) {
+  if (currentHour >= fajr && currentHour < sunrise) {
     return "dawn";
   }
   // Day: From Sunrise to Asr
-  if (hour >= CAIRO_PRAYER_TIMES.sunrise && hour < CAIRO_PRAYER_TIMES.asr) {
+  if (currentHour >= sunrise && currentHour < asr) {
     return "day";
   }
   // Sunset: From Asr to Maghrib (golden hour)
-  if (hour >= CAIRO_PRAYER_TIMES.asr && hour < CAIRO_PRAYER_TIMES.maghrib) {
+  if (currentHour >= asr && currentHour < maghrib) {
     return "sunset";
   }
   // Night: From Maghrib to Fajr (next day)

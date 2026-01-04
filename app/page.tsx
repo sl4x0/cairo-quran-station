@@ -1,5 +1,5 @@
 "use client";
-import { Play, Pause, Volume2, VolumeX } from "lucide-react";
+import { Play, Pause, Volume2, VolumeX, Settings } from "lucide-react";
 import type React from "react";
 
 import { motion } from "framer-motion";
@@ -16,11 +16,15 @@ import { Footer } from "@/components/footer";
 import { Slider } from "@/components/slider";
 import { Toast } from "@/components/toast";
 import { InfoModal } from "@/components/info-modal";
+import { PreferencesModal } from "@/components/preferences-modal";
 import { FridayCard } from "@/components/friday-card";
 import { AlKahfModal } from "@/components/alkahf-modal";
 import { Header } from "@/components/header";
 import { toArabicNum } from "@/lib/arabic-numerals";
 import { getTimePhase, getPhaseConfig } from "@/lib/time-phase";
+import { usePrayerContext } from "@/contexts/prayer-context";
+import { usePrayerNotifications } from "@/hooks/use-prayer-notifications";
+import { getPreference, savePreference } from "@/lib/preferences";
 
 // Lazy load non-critical components
 const AyahOfTheDay = lazy(() =>
@@ -37,13 +41,16 @@ const PrayerTimes = lazy(() =>
 const STREAM_URL = "https://n01.radiojar.com/8s5u5tpdtwzuv";
 
 export default function Home() {
+  const { prayerTimes } = usePrayerContext();
+  const { requestPermission } = usePrayerNotifications(prayerTimes);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isBuffering, setIsBuffering] = useState(false);
-  const [volume, setVolume] = useState(70);
+  const [volume, setVolume] = useState(() => getPreference("volume"));
   const [previousVolume, setPreviousVolume] = useState(70);
   const [isMuted, setIsMuted] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [showPreferencesModal, setShowPreferencesModal] = useState(false);
   const [isFriday, setIsFriday] = useState(false);
   const [showAlKahfModal, setShowAlKahfModal] = useState(false);
   const [timePhase, setTimePhase] = useState<
@@ -70,7 +77,8 @@ export default function Home() {
 
   useEffect(() => {
     const updatePhase = () => {
-      const phase = getTimePhase();
+      if (!prayerTimes) return;
+      const phase = getTimePhase(prayerTimes);
       setTimePhase(phase);
       setPhaseConfig(getPhaseConfig(phase));
     };
@@ -78,7 +86,7 @@ export default function Home() {
     updatePhase();
     const interval = setInterval(updatePhase, 60000);
     return () => clearInterval(interval);
-  }, []);
+  }, [prayerTimes]);
 
   useEffect(() => {
     const today = new Date().getDay();
@@ -86,7 +94,7 @@ export default function Home() {
   }, []);
 
   const accentColor = isFriday ? "emerald" : "primary";
-  const glowClass = isFriday ? "glow-emerald" : "glow-gold";
+  const shadowClass = isFriday ? "elegant-shadow-emerald" : "elegant-shadow";
   const borderColorClass = isFriday ? "border-emerald-500" : "border-primary";
   const textColorClass = isFriday ? "text-emerald-400" : "text-primary";
   const bgGradientClass = isFriday ? "from-emerald-500/10" : "from-primary/10";
@@ -103,6 +111,8 @@ export default function Home() {
       } else {
         setIsBuffering(true);
         await audio.play();
+        // Request notification permission on first play
+        requestPermission();
       }
     } catch (error) {
       console.error("Playback error:", error);
@@ -116,6 +126,7 @@ export default function Home() {
     (newValue: number[]) => {
       const newVolume = newValue[0];
       setVolume(newVolume);
+      savePreference("volume", newVolume);
       if (audioRef.current) {
         audioRef.current.volume = newVolume / 100;
       }
@@ -288,6 +299,14 @@ export default function Home() {
         timePhase={timePhase}
         phaseConfig={phaseConfig}
       />
+
+      <PreferencesModal
+        isOpen={showPreferencesModal}
+        onClose={() => setShowPreferencesModal(false)}
+        onVolumeChange={(vol) => handleVolumeChange([vol])}
+        currentVolume={volume}
+      />
+
       <AlKahfModal
         isOpen={showAlKahfModal}
         onClose={() => setShowAlKahfModal(false)}
@@ -361,7 +380,7 @@ export default function Home() {
               >
                 <div className="w-full">
                   <motion.div
-                    className={`relative flex flex-col h-full min-h-[420px] sm:min-h-[450px] md:min-h-[480px] lg:min-h-[450px] justify-between bg-black/30 backdrop-blur-3xl border-2 border-white/10 rounded-3xl md:rounded-[3rem] overflow-hidden ${glowClass} shadow-[0_8px_32px_rgba(0,0,0,0.3)]`}
+                    className={`relative flex flex-col h-full min-h-[420px] sm:min-h-[450px] md:min-h-[480px] lg:min-h-[450px] justify-between bg-black/30 backdrop-blur-3xl border-2 border-white/10 rounded-3xl md:rounded-[3rem] overflow-hidden ${shadowClass} shadow-2xl`}
                     initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: 0.8, duration: 1, ease: "easeOut" }}
@@ -448,7 +467,7 @@ export default function Home() {
                     <div className="w-full px-4 py-3 sm:px-5 sm:py-4 md:px-6 md:py-4 flex flex-col gap-3 sm:gap-4 bg-gradient-to-t from-black/60 via-black/30 to-transparent backdrop-blur-sm">
                       {/* Volume Control - Accessible Radix Slider */}
                       <div
-                        className="glass-panel p-3 sm:p-4 md:p-4 rounded-2xl md:rounded-3xl w-full border-2 border-primary/20 glow-button bg-gradient-to-br from-primary/5 to-transparent"
+                        className="glass-panel p-3 sm:p-4 md:p-4 rounded-2xl md:rounded-3xl w-full border-2 border-primary/20 elegant-shadow bg-gradient-to-br from-primary/5 to-transparent"
                         role="region"
                         aria-label="التحكم في مستوى الصوت"
                       >
@@ -531,13 +550,33 @@ export default function Home() {
                               {toArabicNum(volume.toString())}٪
                             </span>
                           </motion.div>
+
+                          {/* Settings Button */}
+                          <motion.button
+                            onClick={() => setShowPreferencesModal(true)}
+                            className={`flex-shrink-0 p-2.5 sm:p-3 md:p-3.5 rounded-xl sm:rounded-2xl ${
+                              isFriday
+                                ? "bg-emerald-500/50 hover:bg-emerald-500/70 border-emerald-400/80"
+                                : "bg-amber-500/50 hover:bg-amber-500/70 border-amber-400/80"
+                            } border-2 transition-all duration-200 focus-visible:ring-4 focus-visible:ring-amber-500 focus-visible:outline-none min-w-[48px] min-h-[48px] sm:min-w-[52px] sm:min-h-[52px] md:min-w-[56px] md:min-h-[56px] flex items-center justify-center group shadow-2xl`}
+                            whileHover={{ scale: 1.08, rotate: 90 }}
+                            whileTap={{ scale: 0.92 }}
+                            aria-label="الإعدادات"
+                          >
+                            <Settings
+                              className={`w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 ${
+                                isFriday ? "text-emerald-100" : "text-amber-100"
+                              } drop-shadow-[0_0_20px_rgba(245,158,11,1)] group-hover:scale-110 transition-transform`}
+                              strokeWidth={2.5}
+                            />
+                          </motion.button>
                         </div>
                       </div>
 
                       {/* Location and Frequency Badges - Enhanced */}
                       <div className="flex items-center justify-center gap-2 sm:gap-2.5 md:gap-3 flex-wrap">
                         <motion.div
-                          className="glass-panel px-4 md:px-6 py-2.5 md:py-3 rounded-2xl md:rounded-full border-2 border-secondary/40 glow-teal min-h-[44px] bg-gradient-to-br from-secondary/10 to-transparent"
+                          className="glass-panel px-4 md:px-6 py-2.5 md:py-3 rounded-2xl md:rounded-full border-2 border-secondary/40 elegant-shadow-teal min-h-[44px] bg-gradient-to-br from-secondary/10 to-transparent"
                           whileHover={{
                             scale: prefersReducedMotion ? 1 : 1.05,
                             y: -2,
@@ -549,7 +588,7 @@ export default function Home() {
                           </span>
                         </motion.div>
                         <motion.div
-                          className="glass-panel px-4 md:px-6 py-2.5 md:py-3 rounded-2xl md:rounded-full border-2 border-primary/40 glow-button min-h-[44px] bg-gradient-to-br from-primary/10 to-transparent"
+                          className="glass-panel px-4 md:px-6 py-2.5 md:py-3 rounded-2xl md:rounded-full border-2 border-primary/40 elegant-shadow min-h-[44px] bg-gradient-to-br from-primary/10 to-transparent"
                           whileHover={{
                             scale: prefersReducedMotion ? 1 : 1.05,
                             y: -2,

@@ -3,6 +3,8 @@ import type { Metadata, Viewport } from "next";
 import { Readex_Pro, Orbitron, Cairo, Amiri } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { PrayerProvider } from "@/contexts/prayer-context";
+import { ServiceWorkerRegistration } from "@/components/service-worker-registration";
 import "./globals.css";
 
 // Readex Pro - For body text and general UI
@@ -123,7 +125,10 @@ export default function RootLayout({
       <body
         className={`${readexPro.className} ${orbitron.variable} ${cairo.variable} ${amiri.variable} antialiased`}
       >
-        <ErrorBoundary>{children}</ErrorBoundary>
+        <ServiceWorkerRegistration />
+        <PrayerProvider>
+          <ErrorBoundary>{children}</ErrorBoundary>
+        </PrayerProvider>
         <Analytics />
       </body>
     </html>
