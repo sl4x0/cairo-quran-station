@@ -464,7 +464,7 @@ export default function Home() {
                           </motion.button>
 
                           {/* Accessible Radix Slider */}
-                          <div className="flex-1 px-2">
+                          <div className="flex-1 px-2 py-2 sm:py-0 -my-2 sm:my-0">
                             <Slider
                               value={[volume]}
                               onValueChange={handleVolumeChange}

@@ -100,7 +100,10 @@ function Slider({
     >
       <SliderPrimitive.Track
         data-slot="slider-track"
-        className="relative grow overflow-hidden rounded-full data-[orientation=horizontal]:h-1.5 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1.5 bg-transparent"
+        className="relative grow overflow-hidden rounded-full data-[orientation=horizontal]:h-2 sm:data-[orientation=horizontal]:h-1.5 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1.5 bg-transparent cursor-pointer"
+        style={{
+          touchAction: "none",
+        }}
       >
         <SliderPrimitive.Range
           data-slot="slider-range"
@@ -115,12 +118,16 @@ function Slider({
           data-slot="slider-thumb"
           key={index}
           className={cn(
-            "block size-4 shrink-0 rounded-full transition-all focus-visible:ring-4 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 border-2",
+            "block size-5 sm:size-4 shrink-0 rounded-full transition-all focus-visible:ring-4 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 border-2 cursor-pointer touch-none",
+            "active:scale-125 active:cursor-grabbing",
             colors.thumb,
             colors.border,
             colors.shadow,
             colors.ring
           )}
+          style={{
+            touchAction: "none",
+          }}
         />
       ))}
     </SliderPrimitive.Root>
