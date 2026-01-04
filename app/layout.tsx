@@ -29,6 +29,11 @@ export const metadata: Metadata = {
   publisher: "Cairo Quran Station",
   generator: "v0.app",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
   robots: {
     index: true,
     follow: true,
