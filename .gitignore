@@ -31,7 +31,15 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
-.env*
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Allow these reference files
+!.env.example
+!.env.github-pages
 
 # vercel
 .vercel
@@ -39,3 +47,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Backup and temporary files
+*.backup
+*-NEW.*
+*-OLD.*
+FIXES_APPLIED.md
+
+# Build info
+tsconfig.tsbuildinfo

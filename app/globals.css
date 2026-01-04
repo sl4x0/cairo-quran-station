@@ -1,26 +1,576 @@
+@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700;900&display=swap");
 @import "tailwindcss";
+@import "tw-animate-css";
 
+@custom-variant dark (&:is(.dark *));
+
+/* Custom Neo-Cairo 2050 theme with void blue/black backgrounds, electric gold, and deep teal */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --void-black: #020617;
+  --deep-teal: #0d9488;
+  --electric-gold: #f59e0b;
+  --holographic-glass: rgba(255, 255, 255, 0.05);
+  --glow-border: rgba(255, 255, 255, 0.1);
+
+  --background: #020617;
+  --foreground: #f8fafc;
+  --card: rgba(255, 255, 255, 0.03);
+  --card-foreground: #f8fafc;
+  --popover: rgba(15, 23, 42, 0.95);
+  --popover-foreground: #f8fafc;
+  --primary: #f59e0b;
+  --primary-foreground: #020617;
+  --secondary: #0d9488;
+  --secondary-foreground: #f8fafc;
+  --muted: rgba(255, 255, 255, 0.1);
+  --muted-foreground: rgba(248, 250, 252, 0.6);
+  --accent: #0d9488;
+  --accent-foreground: #f8fafc;
+  --destructive: #ef4444;
+  --destructive-foreground: #f8fafc;
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.1);
+  --ring: #f59e0b;
+  --radius: 1.5rem;
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.145 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.269 0 0);
+  --sidebar-ring: oklch(0.439 0 0);
 }
 
 @theme inline {
+  --font-sans: "Cairo", "Tajawal", "Readex Pro", "Readex Pro Fallback",
+    system-ui, sans-serif;
+  --font-orbitron: "Orbitron", "Orbitron Fallback", monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Increase base font sizes for better Arabic readability */
+  --font-size-xs: 0.875rem;
+  --font-size-sm: 1rem;
+  --font-size-base: 1.125rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 1.75rem;
+  --font-size-3xl: 2rem;
+  --font-size-4xl: 2.5rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    /* Set larger base font size for Arabic text */
+    font-size: 1.125rem;
+  }
+
+  /* Added focus-visible ring for keyboard navigation accessibility */
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  [role="button"]:focus-visible {
+    @apply ring-2 ring-amber-500 ring-offset-2 ring-offset-background outline-none;
+  }
+
+  /* Screen reader only class for accessibility */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  .sr-only:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: inherit;
+    margin: inherit;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Custom animations for futuristic effects */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes rotate-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes glow-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.2),
+      0 0 40px rgba(245, 158, 11, 0.1), inset 0 0 20px rgba(255, 255, 255, 0.05);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(245, 158, 11, 0.4),
+      0 0 60px rgba(245, 158, 11, 0.2), inset 0 0 30px rgba(255, 255, 255, 0.1);
+  }
+}
+
+@keyframes glow-pulse-emerald {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(52, 211, 153, 0.2),
+      0 0 40px rgba(52, 211, 153, 0.1), inset 0 0 20px rgba(255, 255, 255, 0.05);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(52, 211, 153, 0.4),
+      0 0 60px rgba(52, 211, 153, 0.2), inset 0 0 30px rgba(255, 255, 255, 0.1);
+  }
+}
+
+@keyframes border-flow {
+  0% {
+    border-image-source: linear-gradient(
+      135deg,
+      rgba(245, 158, 11, 0.5) 0%,
+      transparent 50%,
+      rgba(245, 158, 11, 0.5) 100%
+    );
+  }
+  50% {
+    border-image-source: linear-gradient(
+      135deg,
+      transparent 0%,
+      rgba(245, 158, 11, 0.8) 50%,
+      transparent 100%
+    );
+  }
+  100% {
+    border-image-source: linear-gradient(
+      135deg,
+      rgba(245, 158, 11, 0.5) 0%,
+      transparent 50%,
+      rgba(245, 158, 11, 0.5) 100%
+    );
+  }
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+.animate-glow-pulse-emerald {
+  animation: glow-pulse-emerald 3s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-rotate-slow {
+  animation: rotate-slow 60s linear infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 3s linear infinite;
+}
+
+/* ============================================
+   UNIFIED GLASS MORPHISM DESIGN SYSTEM
+   ============================================
+   Consistent, accessible, and beautiful glass panels
+   Used across entire application for visual harmony
+   ============================================ */
+
+/* Base Glass Panel - Primary component (used 20+ times) */
+.glass-panel {
+  /* Enhanced multi-layer background for depth */
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.04) 50%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+
+  /* Superior blur with saturation boost */
+  backdrop-filter: blur(60px) saturate(150%);
+  -webkit-backdrop-filter: blur(60px) saturate(150%);
+
+  /* Subtle border with inner glow */
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
+
+  /* Ensure text contrast for accessibility (WCAG AA) */
+  color: rgba(248, 250, 252, 0.95);
+}
+
+/* Elevated Glass Panel - For important elements */
+.glass-panel-elevated {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.06) 50%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  backdrop-filter: blur(80px) saturate(180%);
+  -webkit-backdrop-filter: blur(80px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 12px 48px 0 rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.18), 0 0 80px rgba(245, 158, 11, 0.08);
+}
+
+/* Premium header glass effect with multi-layer depth */
+.glass-header {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  backdrop-filter: blur(100px) saturate(200%);
+  -webkit-backdrop-filter: blur(100px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.15), 0 0 60px rgba(245, 158, 11, 0.08);
+}
+
+/* Enhanced button glass for better touch feedback */
+.glass-button {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(40px) saturate(130%);
+  -webkit-backdrop-filter: blur(40px) saturate(130%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.28);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.glass-button:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Added emerald-specific glass for Friday mode */
+.glass-panel-emerald {
+  background: linear-gradient(
+    135deg,
+    rgba(16, 185, 129, 0.08) 0%,
+    rgba(16, 185, 129, 0.04) 50%,
+    rgba(16, 185, 129, 0.02) 100%
+  );
+  backdrop-filter: blur(60px) saturate(150%);
+  -webkit-backdrop-filter: blur(60px) saturate(150%);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 0 rgba(16, 185, 129, 0.15), 0 0 40px rgba(16, 185, 129, 0.12);
+}
+
+/* ============================================
+   UNIFIED GLOW & SHADOW SYSTEM
+   ============================================
+   Consistent ambient lighting effects
+   Matches glass-panel design system
+   ============================================ */
+
+/* Primary Gold Glow - For day/regular theme */
+.glow-gold {
+  box-shadow: 0 0 40px rgba(245, 158, 11, 0.3),
+    0 0 80px rgba(245, 158, 11, 0.18), 0 0 120px rgba(245, 158, 11, 0.1),
+    inset 0 0 40px rgba(245, 158, 11, 0.08);
+}
+
+/* Secondary Teal Glow - For accents */
+.glow-teal {
+  box-shadow: 0 0 40px rgba(13, 148, 136, 0.3),
+    0 0 80px rgba(13, 148, 136, 0.18), 0 0 120px rgba(13, 148, 136, 0.1),
+    inset 0 0 40px rgba(13, 148, 136, 0.08);
+}
+
+/* White Glow - For subtle highlights */
+.glow-white {
+  box-shadow: 0 0 40px rgba(255, 255, 255, 0.2),
+    0 0 80px rgba(255, 255, 255, 0.12), 0 0 120px rgba(255, 255, 255, 0.06),
+    inset 0 0 40px rgba(255, 255, 255, 0.05);
+}
+
+/* Emerald Glow - For Friday special mode */
+.glow-emerald {
+  box-shadow: 0 0 40px rgba(16, 185, 129, 0.3),
+    0 0 80px rgba(16, 185, 129, 0.18), 0 0 120px rgba(16, 185, 129, 0.1),
+    inset 0 0 40px rgba(16, 185, 129, 0.08);
+}
+
+/* Purple Glow - For dawn theme */
+.glow-purple {
+  box-shadow: 0 0 40px rgba(168, 85, 247, 0.3),
+    0 0 80px rgba(168, 85, 247, 0.18), 0 0 120px rgba(168, 85, 247, 0.1),
+    inset 0 0 40px rgba(168, 85, 247, 0.08);
+}
+
+/* Orange Glow - For sunset theme */
+.glow-orange {
+  box-shadow: 0 0 40px rgba(249, 115, 22, 0.3),
+    0 0 80px rgba(249, 115, 22, 0.18), 0 0 120px rgba(249, 115, 22, 0.1),
+    inset 0 0 40px rgba(249, 115, 22, 0.08);
+}
+
+/* Blue Glow - For night theme */
+.glow-blue {
+  box-shadow: 0 0 40px rgba(59, 130, 246, 0.3),
+    0 0 80px rgba(59, 130, 246, 0.18), 0 0 120px rgba(59, 130, 246, 0.1),
+    inset 0 0 40px rgba(59, 130, 246, 0.08);
+}
+
+/* Added shimmer animation specifically for emerald Friday card */
+@keyframes shimmer-emerald {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.animate-shimmer-emerald {
+  background: linear-gradient(
+    90deg,
+    rgba(16, 185, 129, 0.05) 0%,
+    rgba(52, 211, 153, 0.15) 50%,
+    rgba(16, 185, 129, 0.05) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer-emerald 3s linear infinite;
+}
+
+/* Added scrollbar hide utility for mobile horizontal scroll */
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Optimized Arabic text rendering */
+*[lang="ar"],
+*[dir="rtl"] {
+  font-feature-settings: "liga" 1, "calt" 1, "kern" 1;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Enhanced focus states for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 0.5rem;
+}
+
+/* Improved button states */
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Screen reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Custom range slider styling to fix purple slider - using gold/emerald theme colors */
+/* Webkit browsers (Chrome, Safari, Edge) */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* Webkit slider track */
+input[type="range"]::-webkit-slider-track {
+  height: 0.75rem;
+  border-radius: 9999px;
+  background: var(--input); /* Use theme input color for track */
+  border: 1px solid var(--border); /* Use theme border color */
+}
+
+/* Webkit slider thumb */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--primary); /* Gold color */
+  border: 3px solid var(--primary);
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
+  transition: all 0.2s ease;
+  margin-top: calc(
+    (1.5rem - 0.75rem) / -2
+  ); /* Adjust thumb position to center it on the track */
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 30px rgba(245, 158, 11, 0.8);
+}
+
+/* Firefox */
+input[type="range"]::-moz-range-track {
+  height: 0.75rem;
+  border-radius: 9999px;
+  background: var(--input); /* Use theme input color for track */
+  border: 1px solid var(--border); /* Use theme border color */
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--primary);
+  border: 3px solid var(--primary);
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
+  transition: all 0.2s ease;
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 30px rgba(245, 158, 11, 0.8);
+}
+
+/* Focus state for accessibility */
+input[type="range"]:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+input[type="range"]:focus-visible::-moz-range-thumb {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
 }
