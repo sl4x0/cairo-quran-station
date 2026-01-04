@@ -43,7 +43,7 @@ Added the `NEXT_PUBLIC_BASE_PATH` environment variable to the build step:
 - name: Build with Next.js
   run: npm run build
   env:
-    NEXT_PUBLIC_BASE_PATH: /cairo-quran-station  # ✅ ADDED THIS LINE
+    NEXT_PUBLIC_BASE_PATH: /cairo-quran-station # ✅ ADDED THIS LINE
     NEXT_PUBLIC_SITE_URL: ${{ secrets.SITE_URL || format('https://{0}.github.io/cairo-quran-station', github.repository_owner) }}
     NEXT_PUBLIC_STREAM_URL: ${{ secrets.STREAM_URL || 'https://n01.radiojar.com/8s5u5tpdtwzuv' }}
     NEXT_PUBLIC_RADIOJAR_STATION_ID: ${{ secrets.RADIOJAR_STATION_ID }}
@@ -70,7 +70,7 @@ NEXT_PUBLIC_STREAM_URL=https://n01.radiojar.com/8s5u5tpdtwzuv
 
 ```html
 <!-- ❌ BROKEN: Absolute paths looking at domain root -->
-<link rel="stylesheet" href="/_next/static/chunks/156b7decdd8758e8.css"/>
+<link rel="stylesheet" href="/_next/static/chunks/156b7decdd8758e8.css" />
 <script src="/_next/static/chunks/112f346e31f991df.js"></script>
 ```
 
@@ -78,7 +78,10 @@ NEXT_PUBLIC_STREAM_URL=https://n01.radiojar.com/8s5u5tpdtwzuv
 
 ```html
 <!-- ✅ WORKING: Correct paths with basePath -->
-<link rel="stylesheet" href="/cairo-quran-station/_next/static/chunks/156b7decdd8758e8.css"/>
+<link
+  rel="stylesheet"
+  href="/cairo-quran-station/_next/static/chunks/156b7decdd8758e8.css"
+/>
 <script src="/cairo-quran-station/_next/static/chunks/112f346e31f991df.js"></script>
 ```
 
@@ -126,6 +129,7 @@ Then serve the `out/` directory and navigate to `http://localhost:3000/cairo-qur
 ## Next Steps
 
 1. **Push to GitHub:**
+
    ```bash
    git add .github/workflows/deploy.yml .env.github-pages CRITICAL_FIX_BASEPATH.md
    git commit -m "Fix: Add NEXT_PUBLIC_BASE_PATH for GitHub Pages deployment"
@@ -133,6 +137,7 @@ Then serve the `out/` directory and navigate to `http://localhost:3000/cairo-qur
    ```
 
 2. **Wait for GitHub Actions:**
+
    - Go to repository → Actions tab
    - Watch the deployment workflow
    - Should complete in 2-5 minutes
@@ -161,7 +166,7 @@ If deploying to `username.github.io` (not a subdirectory), remove the basePath:
 
 ```yaml
 # In .github/workflows/deploy.yml
-NEXT_PUBLIC_BASE_PATH: ""  # Empty string for root deployment
+NEXT_PUBLIC_BASE_PATH: "" # Empty string for root deployment
 ```
 
 ### For Custom Domains
