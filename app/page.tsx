@@ -99,7 +99,7 @@ export default function Home() {
       ) {
         // Fallback: use battery level as a heuristic for low-power
         const mounted = true;
-        (navigator as { getBattery: () => Promise<unknown> })
+        (navigator as unknown as { getBattery: () => Promise<unknown> })
           .getBattery()
           .then((battery: unknown) => {
             const bat = battery as {
@@ -161,6 +161,8 @@ export default function Home() {
         audio.pause();
       } else {
         setIsBuffering(true);
+        // For live streams, reload to get the latest content when resuming
+        audio.load();
         await audio.play();
         // Request notification permission on first play
         requestPermission();
