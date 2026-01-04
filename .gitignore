@@ -30,16 +30,15 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-# Allow these reference files
-!.env.example
-!.env.github-pages
+# Internal testing guide (do not publish)
+TESTING.md
 
 # vercel
 .vercel
