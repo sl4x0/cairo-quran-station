@@ -53,7 +53,8 @@ jobs:
       - name: Build Next.js application
         run: npm run build
         env:
-          NEXT_PUBLIC_SITE_URL: https://cairo-quran-station.vercel.app
+          NEXT_PUBLIC_BASE_PATH: /cairo-quran-station
+          NEXT_PUBLIC_SITE_URL: https://sl4x0.github.io/cairo-quran-station
           NEXT_PUBLIC_STREAM_URL: https://n01.radiojar.com/8s5u5tpdtwzuv
 
       - name: Upload build artifacts
