@@ -30,7 +30,13 @@ export const metadata: Metadata = {
   generator: "v0.app",
   manifest: "/manifest.json",
   icons: {
-    icon: "/favicon.svg",
+    icon: [
+      "/favicon.svg",
+      {
+        url: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='8' fill='%23020617' /><g transform='translate(16,10) scale(1.2)'><path d='M28.5 2C20 2 13 9 13 17s7 15 15.5 15c1.6 0 3.1-.2 4.5-.7-6.2 3.6-14.4 1.5-18-4.9C9.9 23.4 11.4 12 22 7.9 27.3 5.3 32.9 4 38 5c-3.6-1.8-7.7-2.5-11.5-3z' fill='%23F6C100'/></g></svg>",
+        type: "image/svg+xml",
+      },
+    ],
     shortcut: "/favicon.svg",
     apple: "/favicon.svg",
   },
@@ -76,14 +82,6 @@ export const metadata: Metadata = {
   },
   formatDetection: {
     telephone: false,
-  },
-  icons: {
-    icon: [
-      {
-        url: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' fontSize='90'>☪️</text></svg>",
-        type: "image/svg+xml",
-      },
-    ],
   },
 };
 
