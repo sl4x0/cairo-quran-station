@@ -1,12 +1,10 @@
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "export",
-  typescript: {
-    ignoreBuildErrors: false,
-  },
   images: {
     unoptimized: true,
   },
-  basePath: process.env.NEXT_PUBLIC_BASE_PATH || "",
+  // No basePath needed for custom domain GitHub Pages deployment
   trailingSlash: true,
 };
 

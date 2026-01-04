@@ -32,12 +32,6 @@ jobs:
 
       - name: Build with Next.js
         run: npm run build
-        env:
-          NEXT_PUBLIC_BASE_PATH: /cairo-quran-station
-          NEXT_PUBLIC_SITE_URL: ${{ secrets.SITE_URL || format('https://{0}.github.io/cairo-quran-station', github.repository_owner) }}
-          NEXT_PUBLIC_STREAM_URL: ${{ secrets.STREAM_URL || 'https://n01.radiojar.com/8s5u5tpdtwzuv' }}
-          NEXT_PUBLIC_RADIOJAR_STATION_ID: ${{ secrets.RADIOJAR_STATION_ID }}
-          NEXT_PUBLIC_RADIOJAR_API_KEY: ${{ secrets.RADIOJAR_API_KEY }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

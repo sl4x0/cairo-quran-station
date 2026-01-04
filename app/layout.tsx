@@ -18,10 +18,7 @@ const orbitron = Orbitron({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ||
-      "https://sl4x0.github.io/cairo-quran-station"
-  ),
+  metadataBase: new URL("https://quran-station.tech"),
   title: "إذاعة القرآن الكريم من القاهرة | بث مباشر",
   description:
     "استمع الآن للبث المباشر لإذاعة القرآن الكريم من القاهرة. تلاوات خاشعة على مدار الساعة، مواقيت الصلاة، وآيات يومية. تطبيق إسلامي شامل.",
