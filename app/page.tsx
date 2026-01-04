@@ -1,5 +1,5 @@
 "use client";
-import { Play, Pause, Volume2, VolumeX, Settings } from "lucide-react";
+import { PlayerCard } from "@/components/player-card";
 import type React from "react";
 
 import { motion } from "framer-motion";
@@ -7,13 +7,11 @@ import {
   useState,
   useRef,
   useEffect,
-  useMemo,
   useCallback,
   lazy,
   Suspense,
 } from "react";
 import { Footer } from "@/components/footer";
-import { Slider } from "@/components/slider";
 import { Toast } from "@/components/toast";
 import { InfoModal } from "@/components/info-modal";
 import { PreferencesModal } from "@/components/preferences-modal";
@@ -58,20 +56,73 @@ export default function Home() {
   >("night");
   const [phaseConfig, setPhaseConfig] = useState(getPhaseConfig("night"));
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(1024);
   const audioRef = useRef<HTMLAudioElement>(null);
   const playerSectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setPrefersReducedMotion(
-        window.matchMedia("(prefers-reduced-motion: reduce)").matches
-      );
-      setWindowWidth(window.innerWidth);
+      // schedule to avoid setState in effect synchronous warning
+      const timeoutId = window.setTimeout(() => {
+        setPrefersReducedMotion(
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        );
+      }, 0);
 
-      const handleResize = () => setWindowWidth(window.innerWidth);
+      // no-op resize handler when we aren't tracking windowWidth
+      const handleResize = () => {};
       window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
+
+      // Detect data-saver / low power conditions and add 'low-power' class to <html>
+      const applyLowPower = (isLow: boolean) => {
+        if (isLow) document.documentElement.classList.add("low-power");
+        else document.documentElement.classList.remove("low-power");
+      };
+
+      // Connection.saveData detection
+      const conn = (
+        navigator as {
+          connection?: {
+            saveData: boolean;
+            addEventListener: (event: string, handler: () => void) => void;
+          };
+        }
+      ).connection;
+      if (conn && typeof conn.saveData === "boolean") {
+        applyLowPower(conn.saveData === true);
+        try {
+          conn.addEventListener("change", () =>
+            applyLowPower(conn.saveData === true)
+          );
+        } catch {}
+      } else if (
+        (navigator as { getBattery?: () => Promise<unknown> }).getBattery
+      ) {
+        // Fallback: use battery level as a heuristic for low-power
+        const mounted = true;
+        (navigator as { getBattery: () => Promise<unknown> })
+          .getBattery()
+          .then((battery: unknown) => {
+            const bat = battery as {
+              level: number;
+              addEventListener: (event: string, handler: () => void) => void;
+            };
+            if (!mounted) return;
+            applyLowPower(bat.level < 0.25);
+            try {
+              bat.addEventListener("levelchange", () =>
+                applyLowPower(bat.level < 0.25)
+              );
+            } catch {}
+          });
+        // return cleanup in outer effect's cleanup below
+        // (we'll still clear the timeout and event listener as before)
+        setTimeout(() => {}, 0);
+      }
+
+      return () => {
+        clearTimeout(timeoutId);
+        window.removeEventListener("resize", handleResize);
+      };
     }
   }, []);
 
@@ -89,19 +140,19 @@ export default function Home() {
   }, [prayerTimes]);
 
   useEffect(() => {
-    const today = new Date().getDay();
-    setIsFriday(today === 5);
+    // schedule to avoid setState in effect synchronous warning
+    const timeoutId = window.setTimeout(() => {
+      const today = new Date().getDay();
+      setIsFriday(today === 5);
+    }, 0);
+
+    return () => clearTimeout(timeoutId);
   }, []);
 
-  const accentColor = isFriday ? "emerald" : "primary";
   const shadowClass = isFriday ? "elegant-shadow-emerald" : "elegant-shadow";
-  const borderColorClass = isFriday ? "border-emerald-500" : "border-primary";
-  const textColorClass = isFriday ? "text-emerald-400" : "text-primary";
   const bgGradientClass = isFriday ? "from-emerald-500/10" : "from-primary/10";
-  const bgClass = isFriday ? "bg-emerald-50" : "bg-primary-50";
-  const iconColorClass = isFriday ? "text-emerald-400" : "text-primary";
 
-  const togglePlay = async () => {
+  const togglePlay = useCallback(async () => {
     const audio = audioRef.current;
     if (!audio) return;
 
@@ -120,7 +171,7 @@ export default function Home() {
       setIsPlaying(false);
       setIsBuffering(false);
     }
-  };
+  }, [isPlaying, requestPermission]);
 
   const handleVolumeChange = useCallback(
     (newValue: number[]) => {
@@ -272,7 +323,7 @@ export default function Home() {
     navigator.mediaSession.setActionHandler("seekbackward", null);
     navigator.mediaSession.setActionHandler("seekforward", null);
     navigator.mediaSession.setActionHandler("seekto", null);
-  }, [isPlaying]);
+  }, [isPlaying, togglePlay]);
 
   useEffect(() => {
     if ("mediaSession" in navigator) {
@@ -380,226 +431,47 @@ export default function Home() {
               >
                 <div className="w-full">
                   <motion.div
-                    className={`relative flex flex-col h-full min-h-[420px] sm:min-h-[450px] md:min-h-[480px] lg:min-h-[450px] justify-between bg-black/30 backdrop-blur-3xl border-2 border-white/10 rounded-3xl md:rounded-[3rem] overflow-hidden ${shadowClass} shadow-2xl`}
+                    className={`relative flex flex-col h-full min-h-[420px] sm:min-h-[420px] justify-between bg-black/30 backdrop-blur-3xl border-2 border-white/10 rounded-3xl md:rounded-[3rem] overflow-hidden ${shadowClass} shadow-2xl`}
                     initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: 0.8, duration: 1, ease: "easeOut" }}
                   >
-                    {/* Zone A: Visual Stage with Centered Sacred Geometry */}
-                    <div className="relative w-full flex items-center justify-center overflow-hidden rounded-t-3xl bg-gradient-to-br from-black/20 via-transparent to-black/20 py-4 sm:py-5 md:py-6">
-                      {/* Play Button - Centered */}
-                      <div className="relative z-20">
-                        <div className="relative w-[140px] h-[140px] sm:w-[180px] sm:h-[180px] md:w-[200px] md:h-[200px] lg:w-[220px] lg:h-[220px]">
-                          <motion.button
-                            onClick={togglePlay}
-                            className={`absolute inset-0 glass-panel rounded-full cursor-pointer group overflow-hidden border-4 ${borderColorClass}/60 focus-visible:ring-4 focus-visible:ring-amber-500 focus-visible:ring-offset-4 focus-visible:ring-offset-black/50 focus-visible:outline-none hover:border-${borderColorClass}/80 transition-all duration-300`}
-                            whileHover={{
-                              scale: prefersReducedMotion ? 1 : 1.05,
-                            }}
-                            whileTap={{
-                              scale: prefersReducedMotion ? 1 : 0.95,
-                            }}
-                            animate={{
-                              boxShadow: prefersReducedMotion
-                                ? undefined
-                                : isPlaying
-                                ? isFriday
-                                  ? [
-                                      "0 0 80px rgba(52, 211, 153, 0.5), inset 0 0 60px rgba(52, 211, 153, 0.2)",
-                                      "0 0 140px rgba(52, 211, 153, 0.7), inset 0 0 90px rgba(52, 211, 153, 0.3)",
-                                      "0 0 80px rgba(52, 211, 153, 0.5), inset 0 0 60px rgba(52, 211, 153, 0.2)",
-                                    ]
-                                  : [
-                                      "0 0 80px rgba(245, 158, 11, 0.5), inset 0 0 60px rgba(245, 158, 11, 0.2)",
-                                      "0 0 140px rgba(245, 158, 11, 0.7), inset 0 0 90px rgba(245, 158, 11, 0.3)",
-                                      "0 0 80px rgba(245, 158, 11, 0.5), inset 0 0 60px rgba(245, 158, 11, 0.2)",
-                                    ]
-                                : "0 0 40px rgba(13, 148, 136, 0.4)",
-                            }}
-                            transition={{
-                              duration: prefersReducedMotion ? 0 : 2.5,
-                              repeat:
-                                isPlaying && !prefersReducedMotion
-                                  ? Number.POSITIVE_INFINITY
-                                  : 0,
-                            }}
-                            aria-label={
-                              isBuffering
-                                ? "جاري التحميل"
-                                : isPlaying
-                                ? "إيقاف البث"
-                                : "تشغيل البث"
-                            }
-                            aria-pressed={isPlaying}
-                          >
-                            <div className="relative w-full h-full flex items-center justify-center min-w-[60px] min-h-[60px]">
-                              {isBuffering ? (
-                                <motion.div
-                                  className={`w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-18 lg:h-18 border-[4px] md:border-[5px] ${borderColorClass} border-t-transparent rounded-full`}
-                                  animate={{ rotate: 360 }}
-                                  transition={{
-                                    duration: 1,
-                                    repeat: Number.POSITIVE_INFINITY,
-                                    ease: "linear",
-                                  }}
-                                  aria-label="جاري التحميل"
-                                />
-                              ) : isPlaying ? (
-                                <Pause
-                                  className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-18 lg:h-18 text-white drop-shadow-[0_0_20px_rgba(245,158,11,0.9)]"
-                                  strokeWidth={2.5}
-                                  fill="currentColor"
-                                />
-                              ) : (
-                                <Play
-                                  className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-18 lg:h-18 text-white drop-shadow-[0_0_20px_rgba(245,158,11,0.9)] ml-1.5"
-                                  strokeWidth={2.5}
-                                  fill="currentColor"
-                                />
-                              )}
-                            </div>
-                          </motion.button>
-                        </div>
-                      </div>
-                    </div>
+                    <PlayerCard
+                      isPlaying={isPlaying}
+                      isBuffering={isBuffering}
+                      isMuted={isMuted}
+                      volume={volume}
+                      onTogglePlay={togglePlay}
+                      onToggleMute={toggleMute}
+                      onOpenPreferences={() => setShowPreferencesModal(true)}
+                    />
 
-                    {/* Zone B: Enhanced Control Deck */}
-                    <div className="w-full px-4 py-3 sm:px-5 sm:py-4 md:px-6 md:py-4 flex flex-col gap-3 sm:gap-4 bg-gradient-to-t from-black/60 via-black/30 to-transparent backdrop-blur-sm">
-                      {/* Volume Control - Accessible Radix Slider */}
-                      <div
-                        className="glass-panel p-3 sm:p-4 md:p-4 rounded-2xl md:rounded-3xl w-full border-2 border-primary/20 elegant-shadow bg-gradient-to-br from-primary/5 to-transparent"
-                        role="region"
-                        aria-label="التحكم في مستوى الصوت"
+                    {/* Location and Frequency Badges - Enhanced (kept for layout parity) */}
+                    <div className="flex items-center justify-center gap-3 sm:gap-4 md:gap-5 flex-wrap px-4 pb-4 mt-6">
+                      <motion.div
+                        className="glass-panel px-4 md:px-6 py-2.5 md:py-3 rounded-2xl md:rounded-full border-2 border-secondary/40 elegant-shadow-teal min-h-[44px] bg-gradient-to-br from-secondary/10 to-transparent"
+                        whileHover={{
+                          scale: prefersReducedMotion ? 1 : 1.05,
+                          y: -2,
+                        }}
+                        whileTap={{ scale: 0.98 }}
                       >
-                        <div
-                          className="flex items-center gap-3 sm:gap-4 md:gap-5"
-                          dir="ltr"
-                        >
-                          {/* Mute/Unmute Button - LARGE and VISIBLE */}
-                          <motion.button
-                            onClick={toggleMute}
-                            className={`flex-shrink-0 p-2.5 sm:p-3 md:p-3.5 rounded-xl sm:rounded-2xl ${
-                              isFriday
-                                ? "bg-emerald-500/50 hover:bg-emerald-500/70 border-emerald-400/80"
-                                : "bg-amber-500/50 hover:bg-amber-500/70 border-amber-400/80"
-                            } border-2 transition-all duration-200 focus-visible:ring-4 focus-visible:ring-amber-500 focus-visible:outline-none min-w-[48px] min-h-[48px] sm:min-w-[52px] sm:min-h-[52px] md:min-w-[56px] md:min-h-[56px] flex items-center justify-center group shadow-2xl`}
-                            whileHover={{ scale: 1.08 }}
-                            whileTap={{ scale: 0.92 }}
-                            aria-label={
-                              isMuted ? "إلغاء كتم الصوت" : "كتم الصوت"
-                            }
-                            aria-pressed={isMuted}
-                          >
-                            {isMuted || volume === 0 ? (
-                              <VolumeX
-                                className={`w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 ${
-                                  isFriday
-                                    ? "text-emerald-100"
-                                    : "text-amber-100"
-                                } drop-shadow-[0_0_20px_rgba(245,158,11,1)] group-hover:scale-110 transition-transform`}
-                                strokeWidth={3}
-                              />
-                            ) : (
-                              <Volume2
-                                className={`w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 ${
-                                  isFriday
-                                    ? "text-emerald-100"
-                                    : "text-amber-100"
-                                } drop-shadow-[0_0_20px_rgba(245,158,11,1)] group-hover:scale-110 transition-transform`}
-                                strokeWidth={3}
-                              />
-                            )}
-                          </motion.button>
-
-                          {/* Accessible Radix Slider */}
-                          <div className="flex-1 px-2 py-2 sm:py-0 -my-2 sm:my-0">
-                            <Slider
-                              value={[volume]}
-                              onValueChange={handleVolumeChange}
-                              min={0}
-                              max={100}
-                              step={1}
-                              timePhase={timePhase}
-                              isFriday={isFriday}
-                              aria-label="مستوى الصوت"
-                            />
-                          </div>
-
-                          {/* Volume Percentage Display */}
-                          <motion.div
-                            className={`flex-shrink-0 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border-2 ${
-                              isFriday
-                                ? "border-emerald-500/50 bg-emerald-500/15"
-                                : "border-primary/50 bg-primary/15"
-                            } min-w-[64px] sm:min-w-[70px] flex items-center justify-center`}
-                            animate={{
-                              scale:
-                                volume !== previousVolume && !isMuted
-                                  ? [1, 1.1, 1]
-                                  : 1,
-                            }}
-                            transition={{ duration: 0.3 }}
-                          >
-                            <span
-                              className={`font-orbitron text-base sm:text-lg md:text-xl font-bold ${
-                                isFriday ? "text-emerald-300" : "text-primary"
-                              } drop-shadow-[0_0_10px_rgba(245,158,11,0.6)] tabular-nums`}
-                              aria-live="polite"
-                              aria-atomic="true"
-                            >
-                              {toArabicNum(volume.toString())}٪
-                            </span>
-                          </motion.div>
-
-                          {/* Settings Button */}
-                          <motion.button
-                            onClick={() => setShowPreferencesModal(true)}
-                            className={`flex-shrink-0 p-2.5 sm:p-3 md:p-3.5 rounded-xl sm:rounded-2xl ${
-                              isFriday
-                                ? "bg-emerald-500/50 hover:bg-emerald-500/70 border-emerald-400/80"
-                                : "bg-amber-500/50 hover:bg-amber-500/70 border-amber-400/80"
-                            } border-2 transition-all duration-200 focus-visible:ring-4 focus-visible:ring-amber-500 focus-visible:outline-none min-w-[48px] min-h-[48px] sm:min-w-[52px] sm:min-h-[52px] md:min-w-[56px] md:min-h-[56px] flex items-center justify-center group shadow-2xl`}
-                            whileHover={{ scale: 1.08, rotate: 90 }}
-                            whileTap={{ scale: 0.92 }}
-                            aria-label="الإعدادات"
-                          >
-                            <Settings
-                              className={`w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 ${
-                                isFriday ? "text-emerald-100" : "text-amber-100"
-                              } drop-shadow-[0_0_20px_rgba(245,158,11,1)] group-hover:scale-110 transition-transform`}
-                              strokeWidth={2.5}
-                            />
-                          </motion.button>
-                        </div>
-                      </div>
-
-                      {/* Location and Frequency Badges - Enhanced */}
-                      <div className="flex items-center justify-center gap-2 sm:gap-2.5 md:gap-3 flex-wrap">
-                        <motion.div
-                          className="glass-panel px-4 md:px-6 py-2.5 md:py-3 rounded-2xl md:rounded-full border-2 border-secondary/40 elegant-shadow-teal min-h-[44px] bg-gradient-to-br from-secondary/10 to-transparent"
-                          whileHover={{
-                            scale: prefersReducedMotion ? 1 : 1.05,
-                            y: -2,
-                          }}
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          <span className="font-readex text-lg md:text-xl font-bold text-secondary tracking-wide drop-shadow-[0_0_12px_rgba(13,148,136,0.6)]">
-                            القاهرة
-                          </span>
-                        </motion.div>
-                        <motion.div
-                          className="glass-panel px-4 md:px-6 py-2.5 md:py-3 rounded-2xl md:rounded-full border-2 border-primary/40 elegant-shadow min-h-[44px] bg-gradient-to-br from-primary/10 to-transparent"
-                          whileHover={{
-                            scale: prefersReducedMotion ? 1 : 1.05,
-                            y: -2,
-                          }}
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          <span className="font-orbitron text-base md:text-lg font-bold text-primary tracking-wider drop-shadow-[0_0_12px_rgba(245,158,11,0.6)] tabular-nums">
-                            {toArabicNum("98.2")} :التردد
-                          </span>
-                        </motion.div>
-                      </div>
+                        <span className="font-readex text-lg md:text-xl font-bold text-secondary tracking-wide drop-shadow-[0_0_12px_rgba(13,148,136,0.6)]">
+                          القاهرة
+                        </span>
+                      </motion.div>
+                      <motion.div
+                        className="glass-panel px-4 md:px-6 py-2.5 md:py-3 rounded-2xl md:rounded-full border-2 border-primary/40 elegant-shadow min-h-[44px] bg-gradient-to-br from-primary/10 to-transparent"
+                        whileHover={{
+                          scale: prefersReducedMotion ? 1 : 1.05,
+                          y: -2,
+                        }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <span className="font-orbitron text-base md:text-lg font-bold text-primary tracking-wider drop-shadow-[0_0_12px_rgba(245,158,11,0.6)] tabular-nums">
+                          {toArabicNum("98.2")} :التردد
+                        </span>
+                      </motion.div>
                     </div>
                   </motion.div>
                 </div>

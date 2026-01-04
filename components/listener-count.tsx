@@ -13,7 +13,7 @@ interface ListenerCountProps {
 
 export function ListenerCount({ isFriday = false }: ListenerCountProps) {
   const mounted = useMounted();
-  const { count, status, lastUpdated } = useListeners();
+  const { count, status, lastUpdated: _lastUpdated } = useListeners();
 
   if (!mounted) {
     return <ListenerCountSkeleton />;

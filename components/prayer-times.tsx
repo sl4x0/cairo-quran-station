@@ -14,32 +14,6 @@ interface PrayerTimings {
   Isha: string;
 }
 
-interface HijriDate {
-  date: string;
-  format: string;
-  day: string;
-  weekday: { ar: string };
-  month: { ar: string };
-  year: string;
-}
-
-interface GregorianDate {
-  date: string;
-  format: string;
-  day: string;
-  weekday: { ar: string };
-  month: { number: string; ar: string };
-  year: string;
-}
-
-interface PrayerData {
-  timings: PrayerTimings;
-  date: {
-    hijri: HijriDate;
-    gregorian: GregorianDate;
-  };
-}
-
 const PRAYER_NAMES = [
   { en: "Fajr", ar: "الفجر", key: "Fajr" },
   { en: "Dhuhr", ar: "الظهر", key: "Dhuhr" },

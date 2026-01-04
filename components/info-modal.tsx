@@ -35,11 +35,11 @@ export function InfoModal({
   isOpen,
   onClose,
   isFriday = false,
-  timePhase,
+  timePhase: _timePhase,
   phaseConfig,
 }: InfoModalProps) {
   const [copied, setCopied] = useState(false);
-  const { count, status, lastUpdated } = useListeners();
+  const { count, status, lastUpdated: _lastUpdated } = useListeners();
   const mounted = useMounted();
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
 
@@ -561,7 +561,7 @@ export function InfoModal({
                             <span className="text-secondary text-lg sm:text-xl">
                               ⬆️
                             </span>{" "}
-                            ثم اختر "إضافة إلى الشاشة الرئيسية"
+                            ثم اختر &quot;إضافة إلى الشاشة الرئيسية&quot;
                           </p>
 
                           <p
@@ -579,7 +579,7 @@ export function InfoModal({
                             <span className="text-secondary text-lg sm:text-xl">
                               ⋮
                             </span>{" "}
-                            ثم اختر "إضافة إلى الشاشة الرئيسية"
+                            ثم اختر &quot;إضافة إلى الشاشة الرئيسية&quot;
                           </p>
                         </div>
                       </div>

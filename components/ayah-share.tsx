@@ -22,6 +22,7 @@ export function AyahShare({
   onClose,
 }: AyahShareProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
   const [imageUrl, setImageUrl] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [includeTafsir, setIncludeTafsir] = useState(false);
@@ -194,8 +195,32 @@ export function AyahShare({
   }, [ayahText, surahName, ayahNumber, tafsir, includeTafsir]);
 
   useEffect(() => {
-    if (isOpen && ayahText) void generateImage();
+    // Schedule image generation after the effect to avoid cascading renders
+    let timeoutId: number | undefined;
+    if (isOpen && ayahText) {
+      timeoutId = window.setTimeout(() => {
+        void generateImage();
+      }, 0);
+
+      // move keyboard focus to close button for accessibility
+      const closeBtn = modalRef.current?.querySelector<HTMLButtonElement>(
+        'button[aria-label="إغلاق"]'
+      );
+      closeBtn?.focus();
+    }
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, [isOpen, ayahText, includeTafsir, generateImage]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    if (isOpen) document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [isOpen, onClose]);
 
   const handleDownload = () => {
     if (!imageUrl) return;
@@ -249,11 +274,19 @@ export function AyahShare({
             transition={{ type: "spring", damping: 25 }}
           >
             <div
+              ref={modalRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="share-title"
+              tabIndex={-1}
               className="glass-panel-elevated rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between p-6 border-b border-primary/20">
-                <h2 className="text-2xl font-bold text-primary">
+                <h2
+                  id="share-title"
+                  className="text-2xl font-bold text-primary"
+                >
                   مشاركة الآية
                 </h2>
                 <button

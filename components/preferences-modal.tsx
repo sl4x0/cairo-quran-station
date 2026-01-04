@@ -1,14 +1,11 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Volume2, Moon, Sun, Monitor, Bell, BellOff } from "lucide-react";
+import { X, Volume2, Bell, BellOff } from "lucide-react";
 import { useState, useEffect } from "react";
-import {
-  getPreferences,
-  savePreference,
-  type UserPreferences,
-} from "@/lib/preferences";
+import { getPreferences, savePreference } from "@/lib/preferences";
 import { Slider } from "./slider";
+import { Toggle } from "./toggle";
 
 interface PreferencesModalProps {
   isOpen: boolean;
@@ -23,10 +20,6 @@ export function PreferencesModal({
   onVolumeChange,
   currentVolume,
 }: PreferencesModalProps) {
-  const [preferences, setPreferences] = useState<UserPreferences>(
-    getPreferences()
-  );
-
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -39,29 +32,34 @@ export function PreferencesModal({
     };
   }, [isOpen]);
 
-  const handleThemeChange = (theme: UserPreferences["theme"]) => {
-    setPreferences((prev) => ({ ...prev, theme }));
-    savePreference("theme", theme);
+  const handleVolumeChange = (volume: number) => {
+    savePreference("volume", volume);
+    onVolumeChange(volume);
   };
 
-  const handleNotificationsToggle = () => {
-    const newValue = !preferences.notificationsEnabled;
-    setPreferences((prev) => ({ ...prev, notificationsEnabled: newValue }));
+  // Notification controls (kept simple and accessible)
+  const initialPrefs = getPreferences();
+  const [notificationsEnabled, setNotificationsEnabled] = useState<boolean>(
+    initialPrefs.notificationsEnabled ?? false
+  );
+  const [notificationTimeBefore, setNotificationTimeBefore] = useState<number>(
+    initialPrefs.notificationTimeBefore ?? 10
+  );
+
+  const handleNotificationsToggle = (next?: boolean) => {
+    const newValue = typeof next === "boolean" ? next : !notificationsEnabled;
+    setNotificationsEnabled(newValue);
     savePreference("notificationsEnabled", newValue);
 
     if (newValue && typeof window !== "undefined" && "Notification" in window) {
-      Notification.requestPermission();
+      // request permission but don't block
+      Notification.requestPermission().catch(() => {});
     }
   };
 
   const handleNotificationTimeChange = (minutes: number) => {
-    setPreferences((prev) => ({ ...prev, notificationTimeBefore: minutes }));
+    setNotificationTimeBefore(minutes);
     savePreference("notificationTimeBefore", minutes);
-  };
-
-  const handleVolumeChange = (volume: number) => {
-    savePreference("volume", volume);
-    onVolumeChange(volume);
   };
 
   return (
@@ -86,7 +84,7 @@ export function PreferencesModal({
             transition={{ type: "spring", damping: 25 }}
           >
             <div
-              className="glass-panel-elevated rounded-3xl max-w-md w-full max-h-[90vh] overflow-y-auto"
+              className="glass-panel-elevated rounded-3xl max-w-md w-full max-h-[90vh] overflow-y-auto scrollbar-hide pr-4"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
@@ -125,61 +123,11 @@ export function PreferencesModal({
                   </div>
                 </div>
 
-                {/* Theme Selection */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <Monitor className="w-5 h-5 text-primary" />
-                    <h3 className="text-lg font-semibold text-foreground">
-                      المظهر
-                    </h3>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    تتغير الخلفية تلقائيًا حسب أوقات الصلاة
-                  </p>
-                  <div className="grid grid-cols-3 gap-3">
-                    <button
-                      onClick={() => handleThemeChange("light")}
-                      className={`glass-button p-4 rounded-xl flex flex-col items-center gap-2 transition-all ${
-                        preferences.theme === "light"
-                          ? "bg-primary/20 border-2 border-primary"
-                          : "hover:bg-white/5"
-                      }`}
-                    >
-                      <Sun className="w-6 h-6" />
-                      <span className="text-sm">فاتح</span>
-                    </button>
-
-                    <button
-                      onClick={() => handleThemeChange("dark")}
-                      className={`glass-button p-4 rounded-xl flex flex-col items-center gap-2 transition-all ${
-                        preferences.theme === "dark"
-                          ? "bg-primary/20 border-2 border-primary"
-                          : "hover:bg-white/5"
-                      }`}
-                    >
-                      <Moon className="w-6 h-6" />
-                      <span className="text-sm">داكن</span>
-                    </button>
-
-                    <button
-                      onClick={() => handleThemeChange("system")}
-                      className={`glass-button p-4 rounded-xl flex flex-col items-center gap-2 transition-all ${
-                        preferences.theme === "system"
-                          ? "bg-primary/20 border-2 border-primary"
-                          : "hover:bg-white/5"
-                      }`}
-                    >
-                      <Monitor className="w-6 h-6" />
-                      <span className="text-sm">تلقائي</span>
-                    </button>
-                  </div>
-                </div>
-
                 {/* Prayer Notifications */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      {preferences.notificationsEnabled ? (
+                      {notificationsEnabled ? (
                         <Bell className="w-5 h-5 text-primary" />
                       ) : (
                         <BellOff className="w-5 h-5 text-muted-foreground" />
@@ -188,42 +136,40 @@ export function PreferencesModal({
                         تنبيهات الصلاة
                       </h3>
                     </div>
-                    <button
-                      onClick={handleNotificationsToggle}
-                      className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-amber-500 ${
-                        preferences.notificationsEnabled
-                          ? "bg-primary"
-                          : "bg-gray-600"
-                      }`}
-                      role="switch"
-                      aria-checked={preferences.notificationsEnabled}
-                    >
-                      <span
-                        className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
-                          preferences.notificationsEnabled
-                            ? "translate-x-7"
-                            : "translate-x-1"
-                        }`}
-                      />
-                    </button>
+                    {/* Reusable Toggle component */}
+                    <Toggle
+                      checked={notificationsEnabled}
+                      onChange={handleNotificationsToggle}
+                      ariaLabel={
+                        notificationsEnabled
+                          ? "إيقاف تنبيهات الصلاة"
+                          : "تفعيل تنبيهات الصلاة"
+                      }
+                      size="lg"
+                    />
                   </div>
 
-                  {preferences.notificationsEnabled && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="glass-panel p-4 rounded-xl space-y-3"
-                    >
-                      <label className="text-sm text-foreground block">
-                        التنبيه قبل الأذان بـ:
-                      </label>
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{
+                      opacity: notificationsEnabled ? 1 : 0,
+                      height: notificationsEnabled ? "auto" : 0,
+                    }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="glass-panel p-4 rounded-xl space-y-3"
+                    aria-hidden={!notificationsEnabled}
+                  >
+                    <label className="text-sm text-foreground block">
+                      التنبيه قبل الأذان بـ:
+                    </label>
+                    <div className="relative">
                       <select
-                        value={preferences.notificationTimeBefore}
+                        value={notificationTimeBefore}
                         onChange={(e) =>
                           handleNotificationTimeChange(Number(e.target.value))
                         }
-                        className="w-full glass-button p-3 rounded-xl text-foreground bg-transparent focus:ring-2 focus:ring-primary focus:outline-none"
+                        className="w-full appearance-none glass-button p-4 rounded-xl text-foreground bg-transparent focus:ring-2 focus:ring-primary focus:outline-none pr-10"
+                        aria-label="التنبيه قبل الأذان"
                       >
                         <option value={5} className="bg-slate-800">
                           ٥ دقائق
@@ -238,8 +184,28 @@ export function PreferencesModal({
                           ٣٠ دقيقة
                         </option>
                       </select>
-                    </motion.div>
-                  )}
+                      <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-muted-foreground">
+                        <svg
+                          className="w-4 h-4"
+                          viewBox="0 0 20 20"
+                          fill="none"
+                          aria-hidden="true"
+                        >
+                          <path
+                            d="M6 8l4 4 4-4"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      قد يتطلب النظام إذن عرض الإشعارات؛ تأكد من السماح به في
+                      إعدادات المتصفح.
+                    </p>
+                  </motion.div>
                 </div>
 
                 {/* Info Note */}

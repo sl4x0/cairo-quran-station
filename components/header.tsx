@@ -2,7 +2,6 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
-import type { TimePhase } from "@/lib/time-phase";
 
 interface PhaseConfig {
   bgClass: string;
