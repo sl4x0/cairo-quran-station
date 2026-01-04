@@ -31,34 +31,15 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   icons: {
     icon: [
-      "/favicon.svg",
+      "/icon-radio.svg",
       {
-        url: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIW2NgYGD4DwABAgEAf6z1xgAAAABJRU5ErkJggg==",
-        type: "image/png",
-        sizes: "16x16",
-      },
-      {
-        url: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIW2NgYGD4DwABAgEAf6z1xgAAAABJRU5ErkJggg==",
-        type: "image/png",
-        sizes: "32x32",
-      },
-      {
-        url: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIW2NgYGD4DwABAgEAf6z1xgAAAABJRU5ErkJggg==",
-        type: "image/png",
-        sizes: "192x192",
-      },
-      {
-        url: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIW2NgYGD4DwABAgEAf6z1xgAAAABJRU5ErkJggg==",
-        type: "image/png",
-        sizes: "512x512",
-      },
-      {
-        url: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='8' fill='%23020617' /><g transform='translate(16,10) scale(1.2)'><path d='M28.5 2C20 2 13 9 13 17s7 15 15.5 15c1.6 0 3.1-.2 4.5-.7-6.2 3.6-14.4 1.5-18-4.9C9.9 23.4 11.4 12 22 7.9 27.3 5.3 32.9 4 38 5c-3.6-1.8-7.7-2.5-11.5-3z' fill='%23F6C100'/></g></svg>",
-        type: "image/svg+xml"
+        url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='2' y='12' width='60' height='40' rx='6' fill='%23020617'/%3E%3Crect x='8' y='18' width='28' height='28' rx='4' fill='%23F6C100'/%3E%3Cg fill='%23020617'%3E%3Crect x='40' y='20' width='14' height='20' rx='2'/%3E%3Ccircle cx='47' cy='30' r='3.5' fill='%23F6C100'/%3E%3C/g%3E%3Crect x='10' y='22' width='6' height='6' rx='1' fill='%23020617'/%3E%3Crect x='10' y='30' width='6' height='6' rx='1' fill='%23020617'/%3E%3Crect x='18' y='22' width='6' height='14' rx='1' fill='%23020617'/%3E%3Crect x='6' y='8' width='40' height='2' rx='1' fill='%23020617' transform='rotate(20 6 8)'/%3E%3C/svg%3E",
+        type: "image/svg+xml",
+        sizes: "64x64"
       }
     ],
-    shortcut: "/favicon.svg",
-    apple: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIW2NgYGD4DwABAgEAf6z1xgAAAABJRU5ErkJggg==",
+    shortcut: "/icon-radio.svg",
+    apple: "/icon-radio.svg",
   },
   robots: {
     index: true,
