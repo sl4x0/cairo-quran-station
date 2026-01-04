@@ -37,7 +37,7 @@ export function AyahShare({
 
     // Canvas dimensions - larger if including tafsir
     const width = 1200;
-    const height = includeTafsir && tafsir ? 900 : 630;
+    const height = includeTafsir && tafsir ? 1000 : 700;
     canvas.width = width;
     canvas.height = height;
 
@@ -71,14 +71,14 @@ export function AyahShare({
     ctx.fillRect(0, height - 4, width, 4);
 
     // Arabic font setup
-    ctx.font = "700 56px 'Amiri', 'Traditional Arabic', serif";
+    ctx.font = "700 48px 'Amiri', 'Traditional Arabic', serif";
     ctx.fillStyle = "#f5f5dc";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
     // Word wrap for Ayah
-    const maxWidth = width - 160;
-    const lineHeight = 80;
+    const maxWidth = width - 240;
+    const lineHeight = 110;
     const words = ayahText.split(" ");
     const lines: string[] = [];
     let currentLine = "";
@@ -98,14 +98,14 @@ export function AyahShare({
     // Prepare tafsir if included
     let tafsirLines: string[] = [];
     if (includeTafsir && tafsir) {
-      ctx.font = "400 28px 'Cairo', sans-serif";
+      ctx.font = "400 24px 'Cairo', sans-serif";
       const tafsirWords = tafsir.split(" ");
       let currentTafsirLine = "";
 
       for (const word of tafsirWords) {
         const testLine = currentTafsirLine + word + " ";
         const metrics = ctx.measureText(testLine);
-        if (metrics.width > maxWidth - 40 && currentTafsirLine) {
+        if (metrics.width > maxWidth - 60 && currentTafsirLine) {
           tafsirLines.push(currentTafsirLine.trim());
           currentTafsirLine = word + " ";
         } else {
@@ -121,13 +121,13 @@ export function AyahShare({
 
     // Calculate positions
     const ayahHeight = lines.length * lineHeight;
-    const tafsirHeight = tafsirLines.length * 45;
-    const spacing = includeTafsir && tafsir ? 40 : 0;
+    const tafsirHeight = tafsirLines.length * 50;
+    const spacing = includeTafsir && tafsir ? 60 : 0;
     const totalHeight = ayahHeight + spacing + tafsirHeight;
-    let startY = (height - totalHeight - 100) / 2 + 50;
+    let startY = (height - totalHeight - 120) / 2 + 80;
 
     // Draw Ayah
-    ctx.font = "700 56px 'Amiri', 'Traditional Arabic', serif";
+    ctx.font = "700 48px 'Amiri', 'Traditional Arabic', serif";
     ctx.fillStyle = "#f5f5dc";
     ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
     ctx.shadowBlur = 20;
@@ -141,19 +141,19 @@ export function AyahShare({
 
     // Draw tafsir if included
     if (includeTafsir && tafsirLines.length > 0) {
-      startY += 30;
-      ctx.font = "600 24px 'Cairo', sans-serif";
+      startY += 50;
+      ctx.font = "600 22px 'Cairo', sans-serif";
       ctx.fillStyle = "#d4af37";
       ctx.fillText("التفسير الميسر", width / 2, startY);
-      startY += 45;
-      ctx.font = "400 28px 'Cairo', sans-serif";
+      startY += 50;
+      ctx.font = "400 24px 'Cairo', sans-serif";
       ctx.fillStyle = "#e8e8d8";
       ctx.shadowColor = "rgba(0, 0, 0, 0.4)";
       ctx.shadowBlur = 10;
       ctx.shadowOffsetY = 2;
       for (const line of tafsirLines) {
         ctx.fillText(line, width / 2, startY);
-        startY += 45;
+        startY += 50;
       }
       ctx.shadowBlur = 0;
       ctx.shadowOffsetY = 0;
@@ -209,7 +209,9 @@ export function AyahShare({
     if (!imageUrl) return;
     try {
       const blob = await (await fetch(imageUrl)).blob();
-      const file = new File([blob], `ayah-${surahName}-${ayahNumber}.png`, { type: "image/png" });
+      const file = new File([blob], `ayah-${surahName}-${ayahNumber}.png`, {
+        type: "image/png",
+      });
       if (navigator.share && navigator.canShare({ files: [file] })) {
         await navigator.share({
           title: `${surahName} - آية ${ayahNumber}`,
@@ -217,7 +219,9 @@ export function AyahShare({
           files: [file],
         });
       } else {
-        await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+        await navigator.clipboard.write([
+          new ClipboardItem({ "image/png": blob }),
+        ]);
         alert("تم نسخ الصورة إلى الحافظة!");
       }
     } catch (error) {
@@ -249,7 +253,9 @@ export function AyahShare({
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between p-6 border-b border-primary/20">
-                <h2 className="text-2xl font-bold text-primary">مشاركة الآية</h2>
+                <h2 className="text-2xl font-bold text-primary">
+                  مشاركة الآية
+                </h2>
                 <button
                   onClick={onClose}
                   className="glass-button w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors focus-visible:ring-2 focus-visible:ring-amber-500"
