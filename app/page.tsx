@@ -45,9 +45,16 @@ export default function Home() {
   const { requestPermission } = usePrayerNotifications(prayerTimes);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isBuffering, setIsBuffering] = useState(false);
-  const [volume, setVolume] = useState(() => getPreference("volume"));
+  const [volume, setVolume] = useState(70);
   const [previousVolume, setPreviousVolume] = useState(70);
   const [isMuted, setIsMuted] = useState(false);
+
+  // Load volume preference on mount to avoid hydration mismatch
+  useEffect(() => {
+    const savedVolume = getPreference("volume");
+    setVolume(savedVolume);
+    if (savedVolume === 0) setIsMuted(true);
+  }, []);
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [showPreferencesModal, setShowPreferencesModal] = useState(false);
@@ -299,9 +306,14 @@ export default function Home() {
     if (!("mediaSession" in navigator)) return;
 
     // Get current Hijri year for album metadata
-    const hijriYear = new Intl.DateTimeFormat("ar-SA-u-ca-islamic", {
-      year: "numeric",
-    }).format(new Date());
+    let hijriYear = "1446";
+    try {
+      hijriYear = new Intl.DateTimeFormat("ar-SA-u-ca-islamic", {
+        year: "numeric",
+      }).format(new Date());
+    } catch (e) {
+      console.error("Failed to format Hijri date:", e);
+    }
 
     // Set rich metadata for lock screen display
     navigator.mediaSession.metadata = new MediaMetadata({
