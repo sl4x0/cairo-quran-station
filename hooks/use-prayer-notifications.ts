@@ -68,6 +68,19 @@ export function usePrayerNotifications(prayerTimes: PrayerTimes | null) {
       if (timeUntilNotification > 0) {
         const timeout = setTimeout(() => {
           try {
+            // Play notification sound (optional - won't crash if file is missing)
+            try {
+              const audio = new Audio('/notification.mp3');
+              audio.volume = 0.5;
+              audio.play().catch(err => {
+                console.log('Could not play notification sound:', err);
+                // Silently fail - notification will still show
+              });
+            } catch (audioError) {
+              console.log('Audio not available:', audioError);
+              // Continue with notification even if audio fails
+            }
+
             const prayerNameAr = PRAYER_NAMES_AR[prayerName];
             const timeAr = `${toArabicNum(hours)}:${toArabicNum(
               minutes.toString().padStart(2, "0")

@@ -39,11 +39,11 @@ export function Header({
   const shadowClass = isFriday ? "elegant-shadow-emerald" : "elegant-shadow";
   const textColorClass = isFriday ? "text-emerald-400" : "text-primary";
   const gradientFrom = isFriday ? "from-emerald-400" : "from-primary";
-  const gradientVia = isFriday ? "via-emerald-300" : "via-yellow-300";
+  const gradientVia = isFriday ? "via-emerald-300" : "via-primary/70";
   const gradientTo = isFriday ? "to-emerald-400" : "to-primary";
   const hoverGradient = isFriday
     ? "from-emerald-400/0 to-emerald-600/0"
-    : "from-primary/0 to-yellow-600/0";
+    : "from-primary/0 to-primary/0";
 
   const getPhaseIcon = () => {
     const iconProps = {
@@ -59,7 +59,7 @@ export function Header({
         return (
           <svg
             {...iconProps}
-            className={`${iconProps.className} text-purple-400 opacity-90 drop-shadow-[0_0_8px_rgba(192,132,252,0.6)]`}
+            className={`${iconProps.className} text-primary opacity-90 drop-shadow-[0_0_8px_rgba(212,175,55,0.6)]`}
           >
             <path
               strokeLinecap="round"
@@ -73,7 +73,7 @@ export function Header({
         return (
           <motion.svg
             {...iconProps}
-            className={`${iconProps.className} text-yellow-400 drop-shadow-[0_0_12px_rgba(250,204,21,0.8)]`}
+            className={`${iconProps.className} text-primary drop-shadow-[0_0_12px_rgba(212,175,55,0.8)]`}
             animate={{ rotate: 360 }}
             transition={{
               duration: 60,
@@ -94,7 +94,7 @@ export function Header({
         return (
           <svg
             {...iconProps}
-            className={`${iconProps.className} text-orange-400 drop-shadow-[0_0_10px_rgba(251,146,60,0.7)]`}
+            className={`${iconProps.className} text-primary drop-shadow-[0_0_10px_rgba(212,175,55,0.7)]`}
           >
             <path
               strokeLinecap="round"
@@ -108,7 +108,7 @@ export function Header({
         return (
           <motion.svg
             {...iconProps}
-            className={`${iconProps.className} text-slate-300 drop-shadow-[0_0_8px_rgba(203,213,225,0.5)]`}
+            className={`${iconProps.className} text-primary drop-shadow-[0_0_8px_rgba(212,175,55,0.5)]`}
             animate={{ rotate: [0, 10, 0, -10, 0] }}
             transition={{
               duration: 8,
@@ -168,14 +168,14 @@ export function Header({
       <div className="flex items-center justify-between w-full px-4 sm:px-6 md:px-8 py-4 md:py-6 gap-3 md:gap-4 relative">
         {/* Info Button - Left Side */}
         <motion.div
-          className="flex-shrink-0"
+          className="flex items-center gap-3 flex-shrink-0"
           initial={{ scale: 0, opacity: 0, rotate: -180 }}
           animate={{ scale: 1, opacity: 1, rotate: 0 }}
           transition={{ delay: 0.2, duration: 0.6, ease: "backOut" }}
         >
           <motion.button
             onClick={onInfoClick}
-            className={`glass-button min-w-[44px] min-h-[44px] w-11 h-11 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center ${shadowClass} group relative overflow-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-amber-500 transition-all duration-300`}
+            className={`glass-button h-10 w-10 rounded-md flex items-center justify-center ${shadowClass} group relative overflow-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary transition-all duration-300`}
             aria-label="فتح معلومات الإذاعة"
             aria-expanded={showInfoModal}
             aria-controls="info-modal"
@@ -235,12 +235,12 @@ export function Header({
         >
           <motion.span
             className={`${
-              isFriday ? "text-emerald-400" : "text-amber-400"
+              isFriday ? "text-emerald-400" : "text-primary"
             } font-bold drop-shadow-[0_0_30px_currentColor]`}
             style={{
               textShadow: isFriday
                 ? "0 0 30px rgba(52, 211, 153, 0.6), 0 0 60px rgba(52, 211, 153, 0.3)"
-                : "0 0 30px rgba(245, 158, 11, 0.6), 0 0 60px rgba(245, 158, 11, 0.3)",
+                : "0 0 30px rgba(212, 175, 55, 0.6), 0 0 60px rgba(212, 175, 55, 0.3)",
             }}
             whileHover={{ scale: 1.02 }}
             transition={{ type: "spring", stiffness: 300 }}
@@ -256,7 +256,7 @@ export function Header({
             href="https://youtube.com/playlist?list=PLm7IU41uzPdgXijvj4aukKwlvzeODO-T4&si=_EIfV-FOVOzDdGFY"
             target="_blank"
             rel="noopener noreferrer"
-            className="glass-button px-3 md:px-4 py-2 md:py-2.5 rounded-full flex items-center gap-2 min-h-[44px] relative overflow-hidden group focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-amber-500 transition-all duration-300"
+            className="glass-button h-10 px-3 md:px-4 rounded-md flex items-center gap-2 relative overflow-hidden group focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary transition-all duration-300"
             initial={{ scale: 0, opacity: 0, x: 50 }}
             animate={{ scale: 1, opacity: 1, x: 0 }}
             transition={{ delay: 0.35, duration: 0.6, ease: "backOut" }}

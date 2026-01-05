@@ -23,25 +23,41 @@ interface PrayerTimings {
 interface PrayerContextType {
   prayerTimes: PrayerTimings | null;
   isLoading: boolean;
+  isUsingFallback: boolean;
+  error?: string | null;
 }
 
 const PrayerContext = createContext<PrayerContextType>({
   prayerTimes: null,
   isLoading: true,
+  isUsingFallback: false,
+  error: null,
 });
 
 export function PrayerProvider({ children }: { children: ReactNode }) {
   const [prayerTimes, setPrayerTimes] = useState<PrayerTimings | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUsingFallback, setIsUsingFallback] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchPrayerTimes = async () => {
       // Try to load from cache first
       const cached = getCachedPrayerTimes();
-      if (cached && typeof cached === "object" && "timings" in cached) {
-        setPrayerTimes(cached.timings as PrayerTimings);
-        setIsLoading(false);
-        return;
+      if (
+        cached &&
+        typeof cached === "object" &&
+        "timings" in cached &&
+        cached.timings &&
+        typeof cached.timings === "object"
+      ) {
+        const timings = cached.timings as PrayerTimings;
+        // Validate that we have the required prayer times
+        if (timings.Fajr && timings.Dhuhr && timings.Asr && timings.Maghrib && timings.Isha) {
+          setPrayerTimes(timings);
+          setIsLoading(false);
+          return;
+        }
       }
 
       try {
@@ -63,11 +79,16 @@ export function PrayerProvider({ children }: { children: ReactNode }) {
 
         if (data.data && data.data.timings) {
           setPrayerTimes(data.data.timings);
+          setIsUsingFallback(false);
+          setError(null);
           // Cache the full response for 24 hours
           cachePrayerTimes(data.data);
         }
-      } catch (error) {
-        console.error("Failed to fetch prayer times, using fallback:", error);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        console.error("Failed to fetch prayer times, using fallback:", err);
+        setError(message);
+        setIsUsingFallback(true);
         setPrayerTimes({
           Fajr: "04:30",
           Sunrise: "06:00",
@@ -88,8 +109,8 @@ export function PrayerProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({ prayerTimes, isLoading }),
-    [prayerTimes, isLoading]
+    () => ({ prayerTimes, isLoading, isUsingFallback, error }),
+    [prayerTimes, isLoading, isUsingFallback, error]
   );
 
   return (

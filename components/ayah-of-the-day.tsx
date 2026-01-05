@@ -28,7 +28,42 @@ interface TafsirResponse {
   data: TafsirData;
 }
 
-export function AyahOfTheDay() {
+export function AyahOfTheDay({
+  timePhase = "day",
+  isFriday = false,
+}: {
+  timePhase?: "dawn" | "day" | "sunset" | "night";
+  isFriday?: boolean;
+}) {
+  // Helper to get theme colors
+  const getThemeColors = () => {
+    if (isFriday) {
+      return {
+        text: "text-emerald-300",
+        border: "border-emerald-500/50",
+        bg: "bg-emerald-500/20",
+        hover: "hover:bg-emerald-500/20 hover:border-emerald-500/40",
+        shadow: "drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]",
+        glow: "shadow-[0_0_15px_rgba(16,185,129,0.15)]",
+        hoverGlow: "0 0 15px rgba(16,185,129,0.3)",
+        ring: "focus:ring-emerald-500",
+      };
+    }
+    // Standard Gold/White Theme for ALL phases
+    return {
+      text: "text-primary", // Uses css var --primary (Gold)
+      border: "border-primary/30",
+      bg: "bg-primary/5",
+      hover: "hover:bg-primary/10 hover:border-primary/50",
+      shadow: "drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]",
+      glow: "shadow-[0_0_15px_rgba(212,175,55,0.1)]",
+      hoverGlow: "0 0 15px rgba(212,175,55,0.25)",
+      ring: "focus:ring-primary",
+    };
+  };
+
+  const themeColors = getThemeColors();
+
   const [ayahData, setAyahData] = useState<{
     arabic: string;
     tafsir: string;
@@ -172,14 +207,46 @@ export function AyahOfTheDay() {
         {/* Header with title and action buttons */}
         <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 mb-3 sm:mb-4 md:mb-5">
           <motion.div
-            className="glass-panel px-5 sm:px-6 py-2.5 sm:py-3 rounded-full border border-secondary/30 shadow-lg"
+            className={`glass-panel px-6 sm:px-8 py-3 sm:py-3.5 rounded-full border-2 shadow-lg backdrop-blur-xl ${
+              isFriday
+                ? "border-emerald-500/50 bg-gradient-to-br from-emerald-500/20 via-emerald-500/10 to-transparent shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+                : timePhase === "dawn"
+                ? "border-purple-500/50 bg-gradient-to-br from-purple-500/20 via-purple-500/10 to-transparent shadow-[0_0_20px_rgba(168,85,247,0.3)]"
+                : timePhase === "sunset"
+                ? "border-orange-500/50 bg-gradient-to-br from-orange-500/20 via-orange-500/10 to-transparent shadow-[0_0_20px_rgba(249,115,22,0.3)]"
+                : timePhase === "night"
+                ? "border-blue-500/50 bg-gradient-to-br from-blue-500/20 via-blue-500/10 to-transparent shadow-[0_0_20px_rgba(59,130,246,0.3)]"
+                : "border-amber-500/50 bg-gradient-to-br from-amber-500/20 via-yellow-500/10 to-transparent shadow-[0_0_20px_rgba(245,158,11,0.3)]"
+            }`}
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: 0.1, duration: 0.4 }}
+            whileHover={{
+              scale: 1.05,
+              boxShadow: isFriday
+                ? "0 0 30px rgba(16,185,129,0.5)"
+                : timePhase === "dawn"
+                ? "0 0 30px rgba(168,85,247,0.5)"
+                : timePhase === "sunset"
+                ? "0 0 30px rgba(249,115,22,0.5)"
+                : timePhase === "night"
+                ? "0 0 30px rgba(59,130,246,0.5)"
+                : "0 0 30px rgba(245,158,11,0.5)",
+            }}
           >
             <h2
               id="ayah-title"
-              className="text-secondary font-bold text-base sm:text-lg tracking-wide"
+              className={`font-bold text-lg sm:text-xl tracking-wide ${
+                isFriday
+                  ? "text-emerald-300 drop-shadow-[0_0_12px_rgba(16,185,129,0.8)]"
+                  : timePhase === "dawn"
+                  ? "text-purple-300 drop-shadow-[0_0_12px_rgba(168,85,247,0.8)]"
+                  : timePhase === "sunset"
+                  ? "text-orange-300 drop-shadow-[0_0_12px_rgba(249,115,22,0.8)]"
+                  : timePhase === "night"
+                  ? "text-blue-300 drop-shadow-[0_0_12px_rgba(59,130,246,0.8)]"
+                  : "text-amber-300 drop-shadow-[0_0_12px_rgba(245,158,11,0.8)]"
+              }`}
               lang="ar"
             >
               آية اليوم
@@ -194,9 +261,9 @@ export function AyahOfTheDay() {
             <motion.button
               onClick={() => setShowShareModal(true)}
               disabled={isRefreshing}
-              className="glass-panel p-2.5 sm:p-3 rounded-full hover:bg-white/15 active:bg-white/20 transition-all duration-200 group disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2 focus:ring-offset-transparent"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              className={`glass-panel p-3 sm:p-3.5 rounded-full ${themeColors.hover} active:bg-${themeColors.bg} transition-all duration-200 group disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 ${themeColors.ring} focus:ring-offset-2 focus:ring-offset-transparent border border-white/10 shadow-lg`}
+              whileHover={{ scale: 1.1, boxShadow: themeColors.hoverGlow }}
+              whileTap={{ scale: 0.9 }}
               initial={{ x: 20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.1, duration: 0.4 }}
@@ -204,7 +271,7 @@ export function AyahOfTheDay() {
               title="مشاركة الآية"
             >
               <Share2
-                className="w-5 h-5 text-muted-foreground group-hover:text-secondary transition-colors"
+                className={`w-5 h-5 sm:w-6 sm:h-6 ${themeColors.text} transition-colors ${themeColors.shadow}`}
                 aria-hidden="true"
               />
             </motion.button>
@@ -212,9 +279,9 @@ export function AyahOfTheDay() {
             <motion.button
               onClick={handleCopy}
               disabled={isCopied || isRefreshing}
-              className="glass-panel p-2.5 sm:p-3 rounded-full hover:bg-white/15 active:bg-white/20 transition-all duration-200 group disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2 focus:ring-offset-transparent"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              className={`glass-panel p-3 sm:p-3.5 rounded-full ${themeColors.hover} active:bg-${themeColors.bg} transition-all duration-200 group disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 ${themeColors.ring} focus:ring-offset-2 focus:ring-offset-transparent border border-white/10 shadow-lg`}
+              whileHover={{ scale: 1.1, boxShadow: themeColors.hoverGlow }}
+              whileTap={{ scale: 0.9 }}
               initial={{ x: 20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.15, duration: 0.4 }}
@@ -231,7 +298,7 @@ export function AyahOfTheDay() {
                     transition={{ duration: 0.2 }}
                   >
                     <Check
-                      className="w-5 h-5 text-secondary"
+                      className={`w-5 h-5 sm:w-6 sm:h-6 ${themeColors.text} ${themeColors.shadow}`}
                       aria-hidden="true"
                     />
                   </motion.div>
@@ -243,7 +310,7 @@ export function AyahOfTheDay() {
                     exit={{ scale: 0 }}
                   >
                     <Copy
-                      className="w-5 h-5 text-muted-foreground group-hover:text-secondary transition-colors"
+                      className={`w-5 h-5 sm:w-6 sm:h-6 ${themeColors.text} transition-colors ${themeColors.shadow}`}
                       aria-hidden="true"
                     />
                   </motion.div>
@@ -254,9 +321,9 @@ export function AyahOfTheDay() {
             <motion.button
               onClick={fetchAyah}
               disabled={isRefreshing}
-              className="glass-panel p-2.5 sm:p-3 rounded-full hover:bg-white/15 active:bg-white/20 transition-all duration-200 group disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-offset-2 focus:ring-offset-transparent"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              className={`glass-panel p-3 sm:p-3.5 rounded-full ${themeColors.hover} active:bg-${themeColors.bg} transition-all duration-200 group disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 ${themeColors.ring} focus:ring-offset-2 focus:ring-offset-transparent border border-white/10 shadow-lg`}
+              whileHover={{ scale: 1.1, boxShadow: themeColors.hoverGlow }}
+              whileTap={{ scale: 0.9 }}
               initial={{ x: 20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.2, duration: 0.4 }}
@@ -264,7 +331,7 @@ export function AyahOfTheDay() {
               title={isRefreshing ? "جاري التحديث..." : "تحديث الآية"}
             >
               <RefreshCw
-                className={`w-5 h-5 text-muted-foreground group-hover:text-secondary transition-colors ${
+                className={`w-5 h-5 sm:w-6 sm:h-6 ${themeColors.text} transition-colors ${themeColors.shadow} ${
                   isRefreshing ? "animate-spin" : ""
                 }`}
                 aria-hidden="true"
@@ -282,14 +349,13 @@ export function AyahOfTheDay() {
           key={ayahData.arabic}
         >
           <p
-            className="text-lg sm:text-xl md:text-2xl lg:text-3xl leading-[1.8] sm:leading-[1.9] md:leading-[2] text-primary font-bold text-center px-1 sm:px-2"
+            className={`text-lg sm:text-xl md:text-2xl lg:text-3xl leading-[1.8] sm:leading-[1.9] md:leading-[2] ${themeColors.text} ${themeColors.shadow} font-bold text-center px-1 sm:px-2`}
             dir="rtl"
             lang="ar"
             style={{
               fontFamily:
                 "'Amiri', 'Traditional Arabic', 'Arabic Typesetting', serif",
               wordSpacing: "0.15em",
-              textShadow: "0 2px 20px rgba(245, 158, 11, 0.3)",
             }}
           >
             {ayahData.arabic}
@@ -304,9 +370,9 @@ export function AyahOfTheDay() {
           transition={{ delay: 0.35, duration: 0.5 }}
           key={ayahData.tafsir}
         >
-          <div className="glass-panel rounded-xl p-3 sm:p-4 border border-secondary/10 bg-gradient-to-br from-secondary/5 to-transparent">
+          <div className={`glass-panel rounded-xl p-4 sm:p-5 border-2 ${themeColors.border} bg-gradient-to-br from-${themeColors.bg} via-${themeColors.bg}/50 to-transparent backdrop-blur-xl ${themeColors.glow}`}>
             <h3
-              className="text-xs sm:text-sm text-secondary font-semibold mb-2 text-center"
+              className={`text-sm sm:text-base ${themeColors.text} font-bold mb-3 text-center ${themeColors.shadow}`}
               lang="ar"
             >
               التفسير الميسر
@@ -314,7 +380,7 @@ export function AyahOfTheDay() {
             <p
               dir="rtl"
               lang="ar"
-              className="text-sm sm:text-base md:text-lg text-slate-100 leading-relaxed max-w-4xl mx-auto text-right px-1 sm:px-2"
+              className="text-sm sm:text-base md:text-lg text-foreground/90 leading-relaxed max-w-4xl mx-auto text-right px-1 sm:px-2"
               style={{
                 fontFamily: "'Readex Pro', 'Cairo', sans-serif",
                 textShadow: "0 1px 3px rgba(0, 0, 0, 0.3)",
@@ -332,9 +398,9 @@ export function AyahOfTheDay() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.4, duration: 0.5 }}
         >
-          <div className="glass-panel px-3 sm:px-5 py-2 sm:py-2.5 rounded-full border border-secondary/20 shadow-md">
+          <div className={`glass-panel px-3 sm:px-5 py-2 sm:py-2.5 rounded-full border ${themeColors.border} shadow-md`}>
             <span
-              className="font-orbitron text-xs sm:text-sm text-secondary tracking-wide block"
+              className={`font-orbitron text-xs sm:text-sm ${themeColors.text} tracking-wide block ${themeColors.shadow}`}
               lang="ar"
             >
               {ayahData.reference}

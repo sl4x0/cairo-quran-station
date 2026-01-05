@@ -23,6 +23,8 @@ import { getTimePhase, getPhaseConfig } from "@/lib/time-phase";
 import { usePrayerContext } from "@/contexts/prayer-context";
 import { usePrayerNotifications } from "@/hooks/use-prayer-notifications";
 import { getPreference, savePreference } from "@/lib/preferences";
+import { ErrorToast } from "@/components/enhanced-toast";
+import { PrayerTimesSkeleton, AyahSkeleton } from "@/components/loading-skeletons";
 
 // Lazy load non-critical components
 const AyahOfTheDay = lazy(() =>
@@ -56,6 +58,7 @@ export default function Home() {
   >("night");
   const [phaseConfig, setPhaseConfig] = useState(getPhaseConfig("night"));
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const playerSectionRef = useRef<HTMLDivElement>(null);
 
@@ -210,9 +213,16 @@ export default function Home() {
     }
   }, [isMuted, volume, previousVolume]);
 
-  // Keyboard controls - Space for play/pause, Arrow Up/Down for volume
+  // Keyboard controls - Space for play/pause, Arrow Up/Down for volume, ? for help
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Show keyboard shortcuts on '?'
+      if (e.key === "?" && !showKeyboardShortcuts) {
+        e.preventDefault();
+        setShowKeyboardShortcuts(true);
+        return;
+      }
+
       if (
         e.target === document.body ||
         (e.target as HTMLElement).tagName === "BUTTON"
@@ -234,7 +244,7 @@ export default function Home() {
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isPlaying, volume, handleVolumeChange, togglePlay]);
+  }, [isPlaying, volume, handleVolumeChange, togglePlay, showKeyboardShortcuts]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -365,6 +375,7 @@ export default function Home() {
         onClose={() => setShowAlKahfModal(false)}
       />
 
+
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div
           className={`absolute inset-0 transition-all duration-200 ${phaseConfig.bgClass}`}
@@ -416,12 +427,12 @@ export default function Home() {
 
         <div className="space-y-8">
           {/* Top Section: Player and Prayer Times side by side on desktop */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
             {/* Player Column */}
-            <div className="col-span-1 lg:col-span-5">
+            <div className="col-span-1 lg:col-span-6 flex">
               <motion.section
                 ref={playerSectionRef}
-                className="h-fit"
+                className="w-full flex"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{
@@ -431,9 +442,9 @@ export default function Home() {
                 role="region"
                 aria-label="مشغل البث المباشر"
               >
-                <div className="w-full">
+                <div className="w-full flex">
                   <motion.div
-                    className={`relative flex flex-col h-full min-h-[420px] sm:min-h-[420px] justify-between bg-black/30 backdrop-blur-3xl border-2 border-white/10 rounded-3xl md:rounded-[3rem] overflow-hidden ${shadowClass} shadow-2xl`}
+                    className={`relative flex flex-col w-full justify-between bg-black/30 backdrop-blur-3xl border-2 border-white/10 rounded-3xl md:rounded-[3rem] overflow-hidden ${shadowClass} shadow-2xl`}
                     initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: 0.8, duration: 1, ease: "easeOut" }}
@@ -445,33 +456,60 @@ export default function Home() {
                       volume={volume}
                       onTogglePlay={togglePlay}
                       onToggleMute={toggleMute}
+                      onVolumeChange={(v) => handleVolumeChange([v])}
                       onOpenPreferences={() => setShowPreferencesModal(true)}
                     />
 
-                    {/* Location and Frequency Badges - Enhanced (kept for layout parity) */}
-                    <div className="flex items-center justify-center gap-3 sm:gap-4 md:gap-5 flex-wrap px-4 pb-4 mt-6">
+                    {/* Location and Frequency Badges */}
+                    <div className="flex items-center justify-center gap-4 sm:gap-5 flex-wrap px-4 pb-6 mt-4">
                       <motion.div
-                        className="glass-panel px-4 md:px-6 py-2.5 md:py-3 rounded-2xl md:rounded-full border-2 border-secondary/40 elegant-shadow-teal min-h-[44px] bg-gradient-to-br from-secondary/10 to-transparent"
+                        className={`glass-panel px-6 md:px-8 py-3 md:py-3.5 rounded-2xl border-2 elegant-shadow min-h-[48px] backdrop-blur-xl ${
+                          isFriday
+                            ? "border-emerald-500/50 bg-gradient-to-br from-emerald-500/20 via-emerald-500/10 to-transparent shadow-[0_0_20px_rgba(16,185,129,0.2)]"
+                            : "border-primary/50 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent shadow-[0_0_20px_rgba(212,175,55,0.2)]"
+                        }`}
                         whileHover={{
-                          scale: prefersReducedMotion ? 1 : 1.05,
-                          y: -2,
+                          scale: prefersReducedMotion ? 1 : 1.08,
+                          y: -3,
+                          boxShadow: isFriday
+                            ? "0 0 30px rgba(16,185,129,0.4)"
+                            : "0 0 30px rgba(212,175,55,0.4)",
                         }}
-                        whileTap={{ scale: 0.98 }}
+                        whileTap={{ scale: 0.95 }}
                       >
-                        <span className="font-readex text-lg md:text-xl font-bold text-secondary tracking-wide drop-shadow-[0_0_12px_rgba(13,148,136,0.6)]">
+                        <span
+                          className={`font-readex text-xl md:text-2xl font-bold tracking-wide ${
+                            isFriday
+                              ? "text-emerald-300 drop-shadow-[0_0_15px_rgba(16,185,129,0.8)]"
+                              : "text-primary drop-shadow-[0_0_15px_rgba(212,175,55,0.8)]"
+                          }`}
+                        >
                           القاهرة
                         </span>
                       </motion.div>
                       <motion.div
-                        className="glass-panel px-4 md:px-6 py-2.5 md:py-3 rounded-2xl md:rounded-full border-2 border-primary/40 elegant-shadow min-h-[44px] bg-gradient-to-br from-primary/10 to-transparent"
+                        className={`glass-panel px-6 md:px-8 py-3 md:py-3.5 rounded-2xl border-2 elegant-shadow min-h-[48px] backdrop-blur-xl ${
+                          isFriday
+                            ? "border-emerald-500/50 bg-gradient-to-br from-emerald-500/20 via-emerald-500/10 to-transparent shadow-[0_0_20px_rgba(16,185,129,0.2)]"
+                            : "border-primary/50 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent shadow-[0_0_20px_rgba(212,175,55,0.2)]"
+                        }`}
                         whileHover={{
-                          scale: prefersReducedMotion ? 1 : 1.05,
-                          y: -2,
+                          scale: prefersReducedMotion ? 1 : 1.08,
+                          y: -3,
+                          boxShadow: isFriday
+                            ? "0 0 30px rgba(16,185,129,0.4)"
+                            : "0 0 30px rgba(212,175,55,0.4)",
                         }}
-                        whileTap={{ scale: 0.98 }}
+                        whileTap={{ scale: 0.95 }}
                       >
-                        <span className="font-orbitron text-base md:text-lg font-bold text-primary tracking-wider drop-shadow-[0_0_12px_rgba(245,158,11,0.6)] tabular-nums">
-                          {toArabicNum("98.2")} :التردد
+                        <span
+                          className={`font-orbitron text-lg md:text-xl font-bold tracking-wider tabular-nums ${
+                            isFriday
+                              ? "text-emerald-300 drop-shadow-[0_0_15px_rgba(16,185,129,0.8)]"
+                              : "text-primary drop-shadow-[0_0_15px_rgba(212,175,55,0.8)]"
+                          }`}
+                        >
+                          98.2 FM
                         </span>
                       </motion.div>
                     </div>
@@ -481,41 +519,28 @@ export default function Home() {
             </div>
 
             {/* Prayer Times Column */}
-            <div className="col-span-1 lg:col-span-7">
-              <div className="flex flex-col gap-8">
-                {isFriday && (
+            <div className="col-span-1 lg:col-span-6 flex flex-col">
+              {isFriday && (
+                <div className="mb-8">
                   <FridayCard onReadAlKahf={() => setShowAlKahfModal(true)} />
-                )}
+                </div>
+              )}
 
-                <motion.section
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    delay: 0.4,
-                    duration: prefersReducedMotion ? 0 : 0.8,
-                  }}
-                  role="region"
-                  aria-label="مواقيت الصلاة"
-                >
-                  <Suspense
-                    fallback={
-                      <div className="glass-panel rounded-3xl p-6 border-2 border-primary/20 animate-pulse">
-                        <div className="h-8 bg-primary/10 rounded mb-4 w-1/3" />
-                        <div className="space-y-3">
-                          {[1, 2, 3, 4, 5].map((i) => (
-                            <div
-                              key={i}
-                              className="h-12 bg-primary/5 rounded"
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    }
-                  >
-                    <PrayerTimes />
-                  </Suspense>
-                </motion.section>
-              </div>
+              <motion.section
+                className="flex-1"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  delay: 0.4,
+                  duration: prefersReducedMotion ? 0 : 0.8,
+                }}
+                role="region"
+                aria-label="مواقيت الصلاة"
+              >
+                <Suspense fallback={<PrayerTimesSkeleton />}>
+                  <PrayerTimes isFriday={isFriday} />
+                </Suspense>
+              </motion.section>
             </div>
           </div>
 
@@ -542,14 +567,14 @@ export default function Home() {
                 </div>
               }
             >
-              <AyahOfTheDay />
+              <AyahOfTheDay timePhase={timePhase} isFriday={isFriday} />
             </Suspense>
           </motion.section>
         </div>
 
         {/* Footer */}
         <div className="mt-12 w-full">
-          <Footer />
+          <Footer timePhase={timePhase} isFriday={isFriday} />
         </div>
       </div>
     </main>

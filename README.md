@@ -2,10 +2,10 @@
 
 A modern, accessible Islamic radio streaming web application built with Next.js 16, featuring live Quran recitation from Cairo, prayer times, daily Quranic verses, and a beautiful adaptive UI that changes throughout the day.
 
-![Next.js](https://img.shields.io/badge/Next.js-16.0-black?style=flat&logo=next.js)
-![React](https://img.shields.io/badge/React-19.2-61DAFB?style=flat&logo=react)
+![Next.js](https://img.shields.io/badge/Next.js-App%20Router-black?style=flat&logo=next.js)
+![React](https://img.shields.io/badge/React-Latest-61DAFB?style=flat&logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat&logo=typescript)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.1-38B2AC?style=flat&logo=tailwind-css)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-Latest-38B2AC?style=flat&logo=tailwind-css)
 
 ## ✨ Features
 
@@ -89,6 +89,7 @@ npm test              # Run Vitest unit tests
 npm run test:ui       # Open Vitest UI for interactive testing
 npm run test:coverage # Generate test coverage report
 npm run test:e2e      # Run Playwright E2E tests
+npm run optimize:images # Optimize SVGs in `public/` for static export
 ```
 
 ### Project Structure

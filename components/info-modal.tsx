@@ -57,9 +57,11 @@ export function InfoModal({
 
   useEffect(() => {
     if (showInstallPrompt) {
+      // Keep instructions visible slightly longer on mobile devices so users have time
+      // to follow the OS install flow (iOS share sheet can take a few seconds).
       const timer = setTimeout(() => {
         setShowInstallPrompt(false);
-      }, 8000);
+      }, 12000);
       return () => clearTimeout(timer);
     }
   }, [showInstallPrompt]);
@@ -99,7 +101,7 @@ export function InfoModal({
   const primaryBg = isFriday ? "from-emerald-500" : "from-primary";
   const primaryGlow = isFriday
     ? "shadow-[0_0_80px_rgba(52,211,153,0.3)]"
-    : "shadow-[0_0_80px_rgba(245,158,11,0.3)]";
+    : "shadow-[0_0_80px_rgba(212,175,55,0.3)]";
 
   const statusColor = isConnected
     ? "text-emerald-400"
@@ -186,9 +188,9 @@ export function InfoModal({
                           "0 0 20px rgba(52,211,153,0.3)",
                         ]
                       : [
-                          "0 0 20px rgba(245,158,11,0.3)",
-                          "0 0 40px rgba(245,158,11,0.5)",
-                          "0 0 20px rgba(245,158,11,0.3)",
+                          "0 0 20px rgba(212,175,55,0.3)",
+                          "0 0 40px rgba(212,175,55,0.5)",
+                          "0 0 20px rgba(212,175,55,0.3)",
                         ],
                   }}
                   transition={{ duration: 2, repeat: Infinity }}
@@ -211,7 +213,7 @@ export function InfoModal({
               </div>
               <button
                 onClick={onClose}
-                className={`glass-panel p-2.5 sm:p-3 rounded-full hover:bg-primary/20 transition-all border-2 ${primaryBorder}/60 hover:${primaryBorder} focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:outline-none group backdrop-blur-md`}
+                className={`glass-panel p-2.5 sm:p-3 rounded-full hover:bg-primary/20 transition-all border-2 ${primaryBorder}/60 hover:${primaryBorder} focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none group backdrop-blur-md`}
                 aria-label="إغلاق النافذة"
               >
                 <X
@@ -328,7 +330,7 @@ export function InfoModal({
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <span
-                        className={`text-4xl sm:text-5xl md:text-6xl font-bold ${primaryColor} drop-shadow-[0_0_20px_rgba(245,158,11,0.5)] tabular-nums leading-none`}
+                        className={`text-4xl sm:text-5xl md:text-6xl font-bold ${primaryColor} drop-shadow-[0_0_20px_rgba(212,175,55,0.5)] tabular-nums leading-none`}
                         style={{
                           fontFamily:
                             "var(--font-sans), Cairo, Readex Pro, sans-serif",
@@ -439,7 +441,7 @@ export function InfoModal({
 
                 <div className="flex items-center gap-2">
                   <span
-                    className={`text-3xl sm:text-4xl font-bold ${primaryColor} drop-shadow-[0_0_15px_rgba(245,158,11,0.5)] tabular-nums leading-none`}
+                    className={`text-3xl sm:text-4xl font-bold ${primaryColor} drop-shadow-[0_0_15px_rgba(212,175,55,0.5)] tabular-nums leading-none`}
                     style={{
                       fontFamily:
                         "var(--font-sans), Cairo, Readex Pro, sans-serif",
@@ -498,7 +500,7 @@ export function InfoModal({
               <div className="relative">
                 <button
                   onClick={handleInstallPrompt}
-                  className="w-full glass-panel rounded-2xl p-4 sm:p-5 hover:bg-secondary/10 transition-all group border-2 border-secondary/30 hover:border-secondary/50 focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:outline-none"
+                  className="w-full glass-panel rounded-2xl p-4 sm:p-5 hover:bg-secondary/10 transition-all group border-2 border-secondary/30 hover:border-secondary/50 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
                   aria-label="عرض تعليمات تثبيت التطبيق"
                   aria-expanded={showInstallPrompt}
                 >
@@ -524,7 +526,8 @@ export function InfoModal({
                   {showInstallPrompt && (
                     <motion.div
                       id="install-instructions"
-                      className="absolute bottom-full left-0 right-0 mb-2 glass-panel rounded-xl p-4 sm:p-5 border-2 border-secondary/40 bg-secondary/10 backdrop-blur-xl z-10 max-h-[60vh] overflow-y-auto"
+                      data-testid="install-popover"
+                      className="install-popover absolute bottom-full left-0 right-0 mb-2 glass-panel rounded-xl p-4 sm:p-5 border-2 border-secondary/40 bg-secondary/10 backdrop-blur-xl z-10 max-h-[60vh] overflow-y-auto"
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
@@ -547,7 +550,7 @@ export function InfoModal({
 
                         <div className="space-y-2">
                           <p
-                            className="text-sm sm:text-base text-foreground/95 text-right leading-relaxed"
+                            className="text-sm sm:text-base text-foreground text-right leading-relaxed"
                             dir="rtl"
                             style={{
                               fontFamily:
@@ -565,7 +568,7 @@ export function InfoModal({
                           </p>
 
                           <p
-                            className="text-sm sm:text-base text-foreground/95 text-right leading-relaxed"
+                            className="text-sm sm:text-base text-foreground text-right leading-relaxed"
                             dir="rtl"
                             style={{
                               fontFamily:
@@ -591,7 +594,7 @@ export function InfoModal({
               {/* Share Button */}
               <button
                 onClick={handleShare}
-                className={`glass-panel rounded-2xl p-4 sm:p-5 hover:bg-primary/10 transition-all group border-2 ${primaryBorder}/30 hover:${primaryBorder}/50 focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:outline-none`}
+                className={`glass-panel rounded-2xl p-4 sm:p-5 hover:bg-primary/10 transition-all group border-2 ${primaryBorder}/30 hover:${primaryBorder}/50 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none`}
                 aria-label={copied ? "تم نسخ الرابط" : "نسخ رابط الإذاعة"}
               >
                 <div className="flex items-center justify-center gap-3">

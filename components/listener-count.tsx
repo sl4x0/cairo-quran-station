@@ -28,14 +28,14 @@ export function ListenerCount({ isFriday = false }: ListenerCountProps) {
     ? isConnected
       ? "text-emerald-400"
       : isFallback
-      ? "text-amber-400"
+      ? "text-primary"
       : isError
       ? "text-red-400"
       : "text-gray-400"
     : isConnected
     ? "text-primary"
     : isFallback
-    ? "text-amber-400"
+    ? "text-primary"
     : isError
     ? "text-red-400"
     : "text-gray-400";
@@ -43,18 +43,18 @@ export function ListenerCount({ isFriday = false }: ListenerCountProps) {
   const borderColor = isFriday
     ? isConnected
       ? "border-emerald-500/40"
-      : "border-amber-500/40"
+      : "border-primary/40"
     : isConnected
     ? "border-primary/40"
-    : "border-amber-500/40";
+    : "border-primary/40";
 
   const bgGradient = isFriday
     ? isConnected
       ? "from-emerald-500/10"
-      : "from-amber-500/10"
+      : "from-primary/10"
     : isConnected
     ? "from-primary/10"
-    : "from-amber-500/10";
+    : "from-primary/10";
 
   const StatusIcon = isLoading ? (
     <motion.div
@@ -113,7 +113,7 @@ export function ListenerCount({ isFriday = false }: ListenerCountProps) {
                 strokeWidth={2.5}
               />
               <span
-                className={`font-orbitron text-lg sm:text-xl md:text-2xl font-bold ${statusColor} drop-shadow-[0_0_10px_rgba(245,158,11,0.5)] tabular-nums`}
+                className={`font-orbitron text-lg sm:text-xl md:text-2xl font-bold ${statusColor} drop-shadow-[0_0_10px_rgba(212,175,55,0.5)] tabular-nums`}
               >
                 {arabicCount}
               </span>
@@ -142,7 +142,7 @@ export function ListenerCount({ isFriday = false }: ListenerCountProps) {
             <motion.div
               className={`w-2 h-2 rounded-full ${
                 isFriday ? "bg-emerald-500" : "bg-primary"
-              } shadow-[0_0_8px_rgba(245,158,11,0.8)]`}
+              } shadow-[0_0_8px_rgba(212,175,55,0.8)]`}
               animate={{
                 opacity: [1, 0.3, 1],
                 scale: [1, 1.2, 1],

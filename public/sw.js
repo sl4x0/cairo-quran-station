@@ -37,6 +37,26 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  // Helper: try upgrading http:// -> https:// for non-localhost requests
+  async function fetchWithUpgrade(req) {
+    // Only attempt for insecure external requests
+    try {
+      if (req.url.startsWith("http://") && !req.url.includes("localhost")) {
+        const upgraded = req.url.replace(/^http:\/\//, "https://");
+        try {
+          const upgradedResponse = await fetch(new Request(upgraded, req));
+          if (upgradedResponse && upgradedResponse.ok) return upgradedResponse;
+        } catch (e) {
+          // ignore and fall back to original
+        }
+      }
+      return await fetch(req);
+    } catch (err) {
+      // Final fallback - rethrow to be handled by callers
+      throw err;
+    }
+  }
+
   // Network-first strategy for API calls
   if (
     request.url.includes("/api/") ||
@@ -44,7 +64,7 @@ self.addEventListener("fetch", (event) => {
     request.url.includes("alquran.cloud")
   ) {
     event.respondWith(
-      fetch(request)
+      fetchWithUpgrade(request)
         .then((response) => {
           // Clone and cache the response
           const responseToCache = response.clone();
@@ -68,7 +88,7 @@ self.addEventListener("fetch", (event) => {
         return cachedResponse;
       }
 
-      return fetch(request)
+      return fetchWithUpgrade(request)
         .then((response) => {
           // Don't cache non-successful responses
           if (

@@ -22,7 +22,7 @@ const PRAYER_NAMES = [
   { en: "Isha", ar: "العشاء", key: "Isha" },
 ] as const;
 
-export function PrayerTimes() {
+export function PrayerTimes({ isFriday = false }: { isFriday?: boolean }) {
   const mounted = useMounted();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [prayerData, setPrayerData] = useState<PrayerTimings | null>(null);
@@ -219,12 +219,12 @@ export function PrayerTimes() {
 
   return (
     <motion.div
-      className="w-full"
+      className="w-full h-full"
       initial={{ y: 50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 1.4, duration: 0.8 }}
     >
-      <div className="bg-black/20 backdrop-blur-3xl border border-white/10 rounded-2xl md:rounded-3xl p-6 md:p-8 elegant-shadow">
+      <div className="bg-black/20 backdrop-blur-3xl border border-white/10 rounded-2xl md:rounded-3xl p-6 md:p-8 elegant-shadow h-full min-h-[500px] flex flex-col justify-between">
         <motion.div
           className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6"
           initial={{ scale: 0.8, opacity: 0 }}
@@ -234,8 +234,8 @@ export function PrayerTimes() {
           aria-label="التاريخ الهجري والميلادي"
         >
           {/* Hijri date first (Islamic calendar priority) */}
-          <div className="glass-panel px-5 py-2.5 rounded-full border border-emerald-500/30 elegant-shadow-teal">
-            <span className="text-base md:text-lg text-emerald-300 font-readex font-semibold drop-shadow-[0_0_8px_rgba(16,185,129,0.4)]">
+          <div className={`glass-panel px-5 py-2.5 rounded-full border ${isFriday ? "border-emerald-500/30 elegant-shadow-emerald" : "border-primary/30 elegant-shadow"}`}>
+            <span className={`text-base md:text-lg font-readex font-semibold ${isFriday ? "text-emerald-300 drop-shadow-[0_0_8px_rgba(16,185,129,0.4)]" : "text-primary drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]"}`}>
               {hijriDate}
             </span>
           </div>
@@ -448,17 +448,17 @@ export function PrayerTimes() {
                         transition={{
                           duration: 1.5,
                           repeat: Number.POSITIVE_INFINITY,
-                        }}
-                        aria-hidden="true"
-                      />
-                    )}
-                  </div>
-                </motion.div>
-              );
-            })}
+                          }}
+                          aria-hidden="true"
+                        />
+                      )}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
         </div>
-      </div>
-    </motion.div>
-  );
-}
+      </motion.div>
+    );
+  }

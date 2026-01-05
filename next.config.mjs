@@ -5,8 +5,20 @@ const nextConfig = {
     unoptimized: true,
   },
   trailingSlash: true,
-  // Note: Headers don't work with static export
-  // Security headers should be configured in hosting platform (GitHub Pages, Vercel, etc.)
+  // Note: Headers may not apply when using static export; set them in the hosting platform as well (GitHub Pages, Vercel, etc.).
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "Content-Security-Policy",
+            value: "upgrade-insecure-requests",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

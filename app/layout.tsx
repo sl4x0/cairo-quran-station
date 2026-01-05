@@ -75,7 +75,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "ar_EG",
-    url: "https://cairo-quran-station.vercel.app",
+    url: "https://quran-station.tech",
     title: "إذاعة القرآن الكريم من القاهرة | بث مباشر",
     description:
       "استمع الآن للبث المباشر لإذاعة القرآن الكريم من القاهرة. تلاوات خاشعة على مدار الساعة، مواقيت الصلاة، وآيات يومية.",

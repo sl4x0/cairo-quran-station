@@ -9,6 +9,9 @@ interface SliderProps
   extends React.ComponentProps<typeof SliderPrimitive.Root> {
   timePhase?: "dawn" | "day" | "sunset" | "night";
   isFriday?: boolean;
+  disabled?: boolean;
+  // Optional aria-describedby to apply to the generated thumb (role=slider)
+  thumbAriaDescribedBy?: string;
 }
 
 function Slider({
@@ -19,6 +22,8 @@ function Slider({
   max = 100,
   timePhase = "day",
   isFriday = false,
+  disabled = false,
+  thumbAriaDescribedBy,
   ...props
 }: SliderProps) {
   const _values = React.useMemo(
@@ -42,45 +47,15 @@ function Slider({
         ring: "focus-visible:ring-emerald-500",
       };
     }
-    switch (timePhase) {
-      case "dawn":
-        return {
-          range: "bg-purple-500",
-          thumb: "bg-purple-500",
-          border: "border-purple-400",
-          shadow:
-            "shadow-[0_0_12px_rgba(168,85,247,0.6)] hover:shadow-[0_0_20px_rgba(168,85,247,0.8)]",
-          ring: "focus-visible:ring-purple-500",
-        };
-      case "sunset":
-        return {
-          range: "bg-orange-500",
-          thumb: "bg-orange-500",
-          border: "border-orange-400",
-          shadow:
-            "shadow-[0_0_12px_rgba(249,115,22,0.6)] hover:shadow-[0_0_20px_rgba(249,115,22,0.8)]",
-          ring: "focus-visible:ring-orange-500",
-        };
-      case "night":
-        return {
-          range: "bg-blue-500",
-          thumb: "bg-blue-500",
-          border: "border-blue-400",
-          shadow:
-            "shadow-[0_0_12px_rgba(59,130,246,0.6)] hover:shadow-[0_0_20px_rgba(59,130,246,0.8)]",
-          ring: "focus-visible:ring-blue-500",
-        };
-      case "day":
-      default:
-        return {
-          range: "bg-amber-500",
-          thumb: "bg-amber-500",
-          border: "border-amber-400",
-          shadow:
-            "shadow-[0_0_12px_rgba(245,158,11,0.6)] hover:shadow-[0_0_20px_rgba(245,158,11,0.8)]",
-          ring: "focus-visible:ring-amber-500",
-        };
-    }
+    // Standard Gold/Primary Theme
+    return {
+      range: "bg-primary",
+      thumb: "bg-primary",
+      border: "border-primary",
+      shadow:
+        "shadow-[0_0_12px_rgba(212,175,55,0.6)] hover:shadow-[0_0_20px_rgba(212,175,55,0.8)]",
+      ring: "focus-visible:ring-primary",
+    };
   };
 
   const colors = getThemeColors();
@@ -92,25 +67,33 @@ function Slider({
       value={value}
       min={min}
       max={max}
+      disabled={disabled}
       className={cn(
-        "relative flex w-full touch-none items-center select-none data-[disabled]:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col",
+        "relative flex w-full touch-none items-center select-none data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col",
         className
       )}
       {...props}
     >
       <SliderPrimitive.Track
-        data-slot="slider-track"
-        className="relative grow overflow-hidden rounded-full data-[orientation=horizontal]:h-2 sm:data-[orientation=horizontal]:h-1.5 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1.5 bg-transparent cursor-pointer"
+        data-slot={cn(
+          "relative grow overflow-hidden rounded-full data-[orientation=horizontal]:h-3 sm:data-[orientation=horizontal]:h-3 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1.5 bg-white/10 border border-white/10",
+          disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer"
+        )}
         style={{
-          touchAction: "none",
+          touchAction: disabled ? "auto" : "none",
         }}
       >
         <SliderPrimitive.Range
           data-slot="slider-range"
           className={cn(
-            colors.range,
-            "absolute data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full"
+            "absolute left-0 top-0 bottom-0 data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full rounded-full z-10 transition-all ease-linear",
+            colors.range
           )}
+          style={{
+            width: `${Math.round(
+              Array.isArray(value) ? value[0] ?? _values[0] : _values[0]
+            )}%`,
+          }}
         />
       </SliderPrimitive.Track>
       {Array.from({ length: _values.length }, (_, index) => (
@@ -118,16 +101,22 @@ function Slider({
           data-slot="slider-thumb"
           key={index}
           className={cn(
-            "block size-5 sm:size-4 shrink-0 rounded-full transition-all focus-visible:ring-4 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 border-2 cursor-pointer touch-none",
-            "active:scale-125 active:cursor-grabbing",
+            "block w-5 h-5 sm:w-6 sm:h-6 shrink-0 rounded-full transition-all focus-visible:ring-4 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 border-2",
+            disabled
+              ? "cursor-not-allowed"
+              : "cursor-pointer touch-none active:scale-125 active:cursor-grabbing",
             colors.thumb,
             colors.border,
-            colors.shadow,
+            !disabled && colors.shadow,
             colors.ring
           )}
           style={{
-            touchAction: "none",
+            touchAction: disabled ? "auto" : "none",
           }}
+          // Pass aria-describedby through to the thumb (role=slider) when provided
+          {...(thumbAriaDescribedBy
+            ? { "aria-describedby": thumbAriaDescribedBy }
+            : {})}
         />
       ))}
     </SliderPrimitive.Root>

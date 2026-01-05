@@ -92,7 +92,7 @@ export function PreferencesModal({
                 <h2 className="text-2xl font-bold text-primary">الإعدادات</h2>
                 <button
                   onClick={onClose}
-                  className="glass-button w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors focus-visible:ring-2 focus-visible:ring-amber-500"
+                  className="glass-button w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors focus-visible:ring-2 focus-visible:ring-primary"
                   aria-label="إغلاق"
                 >
                   <X className="w-5 h-5" />
@@ -171,16 +171,16 @@ export function PreferencesModal({
                         className="w-full appearance-none glass-button p-4 rounded-xl text-foreground bg-transparent focus:ring-2 focus:ring-primary focus:outline-none pr-10"
                         aria-label="التنبيه قبل الأذان"
                       >
-                        <option value={5} className="bg-slate-800">
+                        <option value={5} className="bg-[#1a2332]">
                           ٥ دقائق
                         </option>
-                        <option value={10} className="bg-slate-800">
+                        <option value={10} className="bg-[#1a2332]">
                           ١٠ دقائق
                         </option>
-                        <option value={15} className="bg-slate-800">
+                        <option value={15} className="bg-[#1a2332]">
                           ١٥ دقيقة
                         </option>
-                        <option value={30} className="bg-slate-800">
+                        <option value={30} className="bg-[#1a2332]">
                           ٣٠ دقيقة
                         </option>
                       </select>

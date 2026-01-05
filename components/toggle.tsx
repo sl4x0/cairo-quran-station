@@ -31,7 +31,7 @@ export function Toggle({
 
       <span
         className={`block ${trackClass} transition-colors duration-200 shadow-sm ${
-          checked ? "bg-primary/90" : "bg-gray-600/70"
+          checked ? "bg-primary/90" : "bg-black/40 border border-white/10"
         }`}
         aria-hidden="true"
       />

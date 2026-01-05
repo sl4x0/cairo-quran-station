@@ -75,3 +75,10 @@ playwright-report/
 
 # Build info
 tsconfig.tsbuildinfo
+
+# AI agent artifacts
+.gemini/
+.antigravity/
+brain/
+.copilot-tracking/
+

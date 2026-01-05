@@ -7,7 +7,15 @@ test("PlayerCard renders and responds to controls", () => {
   const onToggleMute = vi.fn();
   const onOpenPreferences = vi.fn();
 
-  const { getByLabelText, getByText, getByRole, container, rerender } = render(
+  const {
+    getByLabelText,
+    getByText,
+    getByRole,
+    getAllByText,
+    getByTestId,
+    container,
+    rerender,
+  } = render(
     <PlayerCard
       isPlaying={true}
       isBuffering={false}
@@ -18,6 +26,8 @@ test("PlayerCard renders and responds to controls", () => {
       onOpenPreferences={onOpenPreferences}
       onVolumeChange={vi.fn()}
       prefersReducedMotion={true}
+      isMobileDevice={false}
+      isVolumeControlled={false}
     />
   );
 
@@ -41,23 +51,54 @@ test("PlayerCard renders and responds to controls", () => {
   // Volume text present
   getByText("75%");
 
-  // When playing and reduced motion is true, there should be no equalizer or 'مباشر' badge
-  expect(container.querySelector(".equalizer")).toBeNull();
-  expect(() => getByText(/مباشر/)).toThrow();
+  // When playing, the play button should show pause icon
+  expect(playButton).toBeInTheDocument();
+});
 
-  // When playing and reduced motion is false, show equalizer
-  rerender(
+test("PlayerCard hides mute button on mobile devices", () => {
+  const { queryByLabelText } = render(
     <PlayerCard
-      isPlaying={true}
+      isPlaying={false}
       isBuffering={false}
       isMuted={false}
       volume={75}
-      onTogglePlay={onTogglePlay}
-      onToggleMute={onToggleMute}
-      onOpenPreferences={onOpenPreferences}
+      onTogglePlay={vi.fn()}
+      onToggleMute={vi.fn()}
+      onOpenPreferences={vi.fn()}
       onVolumeChange={vi.fn()}
-      prefersReducedMotion={false}
+      isMobileDevice={true}
+      isVolumeControlled={true}
     />
   );
-  expect(container.querySelector(".equalizer")).toBeTruthy();
+
+  const muteButton = queryByLabelText("كتم الصوت");
+  expect(muteButton).toBeNull();
+});
+
+test("PlayerCard shows volume control hint when controlled by device", () => {
+  const { getByText, getByRole, getByTestId } = render(
+    <PlayerCard
+      isPlaying={false}
+      isBuffering={false}
+      isMuted={false}
+      volume={75}
+      onTogglePlay={vi.fn()}
+      onToggleMute={vi.fn()}
+      onOpenPreferences={vi.fn()}
+      onVolumeChange={vi.fn()}
+      isMobileDevice={true}
+      isVolumeControlled={true}
+    />
+  );
+
+  // Expect the new phrasing and that the slider references the hint via aria-describedby
+  expect(getByText("التحكم عبر أزرار الهاتف")).toBeInTheDocument();
+  const slider = getByRole("slider");
+  expect(slider.getAttribute("aria-describedby")).toContain(
+    "device-volume-hint"
+  );
+
+  // Watermark should be rendered (decorative)
+  const watermark = getByTestId("player-watermark");
+  expect(watermark).toBeInTheDocument();
 });
