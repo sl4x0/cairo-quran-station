@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X, Radio, Clock, BookOpen, Heart, Calendar, Compass, MoreHorizontal, Info, Shield } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -25,23 +25,61 @@ const moreNavLinks = [
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isVisible, setIsVisible] = useState(true)
   const [showMore, setShowMore] = useState(false)
   const { periodName } = useTheme()
 
+  const lastScrollY = useRef(0)
+  const ticking = useRef(false)
+
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
+      if (!ticking.current) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY
+
+          // Determine if scrolled past threshold
+          setIsScrolled(currentScrollY > 50)
+
+          // Show header when:
+          // 1. At the top of page
+          // 2. Scrolling up
+          // 3. Mobile menu is open
+          if (currentScrollY <= 50) {
+            setIsVisible(true)
+          } else if (currentScrollY < lastScrollY.current) {
+            // Scrolling up
+            setIsVisible(true)
+          } else if (currentScrollY > lastScrollY.current + 10) {
+            // Scrolling down (with small threshold to avoid jitter)
+            setIsVisible(false)
+            setShowMore(false) // Close dropdown when hiding
+          }
+
+          lastScrollY.current = currentScrollY
+          ticking.current = false
+        })
+        ticking.current = true
+      }
     }
-    window.addEventListener("scroll", handleScroll)
+
+    window.addEventListener("scroll", handleScroll, { passive: true })
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
+  // Keep header visible when mobile menu is open
+  useEffect(() => {
+    if (isOpen) {
+      setIsVisible(true)
+    }
+  }, [isOpen])
+
   return (
     <motion.header
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      initial={{ y: 0 }}
+      animate={{ y: isVisible ? 0 : -100 }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled ? "bg-background/95 backdrop-blur-md shadow-md" : "bg-transparent"
       }`}
     >

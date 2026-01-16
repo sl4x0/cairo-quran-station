@@ -6,6 +6,7 @@ import { motion } from "framer-motion"
 import { Calendar, Star, Moon, Gift, Heart, BookOpen } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { daysUntilHijriDate, getCurrentHijriDateString } from "@/lib/hijri"
 
 interface IslamicEvent {
   id: string
@@ -99,21 +100,14 @@ const typeLabels = {
 
 export function ReligiousEventsSection() {
   const [events, setEvents] = useState<IslamicEvent[]>([])
+  const [hijriDate, setHijriDate] = useState("")
 
   useEffect(() => {
-    // Calculate approximate days remaining for each event
+    // Calculate days remaining for each event using proper Hijri calendar
     const calculateDaysRemaining = () => {
-      const today = new Date()
-      const currentYear = today.getFullYear()
-
-      // Approximate Hijri year calculation (rough estimate)
-      const hijriYear = Math.floor((currentYear - 622) * (33 / 32)) + 1
-
       return eventsData
         .map((event) => {
-          // Very rough approximation - in production use a proper Hijri calendar library
-          const daysRemaining = Math.floor(Math.random() * 300) + 30 // Placeholder
-
+          const daysRemaining = daysUntilHijriDate(event.hijriMonth, event.hijriDay)
           return {
             ...event,
             daysRemaining,
@@ -123,6 +117,7 @@ export function ReligiousEventsSection() {
     }
 
     setEvents(calculateDaysRemaining())
+    setHijriDate(getCurrentHijriDateString())
   }, [])
 
   return (
@@ -147,6 +142,11 @@ export function ReligiousEventsSection() {
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
             تابع المناسبات الإسلامية القادمة
           </p>
+          {hijriDate && (
+            <p className="text-sm text-amber-600 dark:text-amber-400 mt-2 font-medium">
+              التاريخ الهجري: {hijriDate}
+            </p>
+          )}
         </motion.div>
 
         <motion.div
@@ -179,12 +179,12 @@ export function ReligiousEventsSection() {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">{event.description}</p>
-                  {event.daysRemaining && (
+                  {event.daysRemaining !== undefined && (
                     <div className="pt-3 border-t border-border">
                       <div className="flex items-center justify-between">
                         <span className="text-muted-foreground text-sm">متبقي</span>
                         <span className="text-lg font-bold text-amber-600 dark:text-amber-400">
-                          {event.daysRemaining} يوم
+                          {event.daysRemaining === 0 ? "اليوم! 🎉" : `${event.daysRemaining} يوم`}
                         </span>
                       </div>
                       <div className="mt-2 h-1.5 sm:h-2 bg-muted rounded-full overflow-hidden">

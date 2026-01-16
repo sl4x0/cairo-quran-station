@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://quran-station.tech/sitemap.xml
+
+# Crawl delay for respectful bot behavior
+Crawl-delay: 1

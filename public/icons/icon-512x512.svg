@@ -1,12 +1,47 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="64" fill="#064e3b"/>
-  <g fill="#fcd34d">
-    <!-- Crescent Moon -->
-    <path d="M256 80c-97.2 0-176 78.8-176 176s78.8 176 176 176c30 0 58.3-7.5 83-20.7-28.7 13.2-61 20.7-95 20.7-124.3 0-225-100.7-225-225S119.7 7 244 7c34 0 66.3 7.5 95 20.7C314.3 14.5 286 7 256 7c-97.2 0-176 78.8-176 176s78.8 176 176 176c30 0 58.3-7.5 83-20.7-28.7 13.2-61 20.7-95 20.7z" transform="translate(70, 50) scale(0.75)"/>
-    <!-- Radio waves -->
-    <circle cx="256" cy="320" r="30" fill="#fcd34d"/>
-    <path d="M256 250c-38.7 0-70 31.3-70 70h20c0-27.6 22.4-50 50-50s50 22.4 50 50h20c0-38.7-31.3-70-70-70z" fill="#fcd34d" opacity="0.7"/>
-    <path d="M256 200c-66.3 0-120 53.7-120 120h20c0-55.2 44.8-100 100-100s100 44.8 100 100h20c0-66.3-53.7-120-120-120z" fill="#fcd34d" opacity="0.5"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad512" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#065f46"/>
+      <stop offset="100%" style="stop-color:#022c22"/>
+    </linearGradient>
+    <linearGradient id="goldGrad512" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24"/>
+      <stop offset="100%" style="stop-color:#d97706"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="248" fill="url(#bgGrad512)" stroke="url(#goldGrad512)" stroke-width="8"/>
+
+  <!-- Decorative arc (crescent moon suggestion) -->
+  <path d="M 133 213 Q 160 107 256 93 Q 352 107 379 213 Q 368 147 256 133 Q 144 147 133 213"
+        fill="url(#goldGrad512)" opacity="0.3"/>
+
+  <!-- Open book / Quran icon -->
+  <g transform="translate(256, 270)">
+    <!-- Book base -->
+    <path d="M -120 -40 L -120 93 Q 0 67 0 67 L 0 -67 Q -27 -53 -120 -40 Z"
+          fill="none" stroke="url(#goldGrad512)" stroke-width="10" stroke-linecap="round"/>
+    <path d="M 120 -40 L 120 93 Q 0 67 0 67 L 0 -67 Q 27 -53 120 -40 Z"
+          fill="none" stroke="url(#goldGrad512)" stroke-width="10" stroke-linecap="round"/>
+
+    <!-- Book spine -->
+    <line x1="0" y1="-67" x2="0" y2="67" stroke="url(#goldGrad512)" stroke-width="8"/>
+
+    <!-- Page lines left -->
+    <line x1="-93" y1="0" x2="-27" y2="-8" stroke="url(#goldGrad512)" stroke-width="5" opacity="0.6"/>
+    <line x1="-93" y1="27" x2="-27" y2="13" stroke="url(#goldGrad512)" stroke-width="5" opacity="0.6"/>
+    <line x1="-93" y1="53" x2="-27" y2="35" stroke="url(#goldGrad512)" stroke-width="5" opacity="0.6"/>
+
+    <!-- Page lines right -->
+    <line x1="93" y1="0" x2="27" y2="-8" stroke="url(#goldGrad512)" stroke-width="5" opacity="0.6"/>
+    <line x1="93" y1="27" x2="27" y2="13" stroke="url(#goldGrad512)" stroke-width="5" opacity="0.6"/>
+    <line x1="93" y1="53" x2="27" y2="35" stroke="url(#goldGrad512)" stroke-width="5" opacity="0.6"/>
   </g>
-  <text x="256" y="440" text-anchor="middle" font-family="Arial" font-size="48" fill="#fcd34d" font-weight="bold">القرآن</text>
+
+  <!-- Radio waves -->
+  <g transform="translate(256, 147)" opacity="0.5">
+    <path d="M -48 0 Q -53 -27 0 -40 Q 53 -27 48 0" fill="none" stroke="url(#goldGrad512)" stroke-width="5"/>
+    <path d="M -32 0 Q -37 -16 0 -27 Q 37 -16 32 0" fill="none" stroke="url(#goldGrad512)" stroke-width="5"/>
+  </g>
 </svg>

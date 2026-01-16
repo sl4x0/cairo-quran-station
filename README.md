@@ -1,90 +1,153 @@
-# محطة القرآن الكريم - القاهرة
+# 📻 Cairo Quran Station | محطة القرآن الكريم - القاهرة
 
-بث مباشر للقرآن الكريم من القاهرة على مدار الساعة
+> Live 24/7 Quran broadcast from Cairo, Egypt — with prayer times, Azkar, Qibla compass, and digital Tasbih.
 
-🔗 **الموقع الرسمي:** [https://quran-station.tech](https://quran-station.tech)
+[![Deploy to GitHub Pages](https://github.com/sl4x0/cairo-quran-station/actions/workflows/deploy.yml/badge.svg)](https://github.com/sl4x0/cairo-quran-station/actions/workflows/deploy.yml)
 
-## المميزات
+[🌐 Live Demo](https://quran-station.tech) | [العربية](#العربية)
 
-- البث المباشر لإذاعة القرآن الكريم من القاهرة
-- مشغل القرآن الكريم مع قراء متعددين
-- مواقيت الصلاة حسب موقعك
-- آية اليوم مع التفسير الميسر
-- الأذكار اليومية
-- السبحة الإلكترونية
-- اتجاه القبلة
-- المناسبات الدينية
-- ثيم ديناميكي يتغير حسب وقت اليوم
-- دعم PWA للتثبيت على جميع الأجهزة (موبايل، تابلت، كمبيوتر)
+---
 
-## التقنيات
+## ✨ Features
 
-- Next.js 15
-- React 19
-- Tailwind CSS 4
-- Framer Motion
-- TypeScript
+| Feature | Description |
+|---------|-------------|
+| 📻 **Live Radio** | 24/7 Quran broadcast from Cairo Radio |
+| 🕌 **Prayer Times** | Accurate Cairo prayer schedule |
+| 📖 **Verse of the Day** | Random Ayah with Tafsir & elegant sharing |
+| 🤲 **Azkar** | Morning & evening remembrances with progress tracking |
+| 📿 **Tasbih** | Digital counter with per-dhikr persistence |
+| 🧭 **Qibla Compass** | Direction to Mecca using device sensors |
+| 📅 **Islamic Events** | Accurate Hijri calendar countdown |
+| 🌙 **Dark Mode** | Auto-adapts to time of day |
+| 📱 **PWA** | Install as app on any device |
 
-## التثبيت المحلي
+---
+
+## 🛠 Tech Stack
+
+- **Framework:** [Next.js 16](https://nextjs.org/) (App Router)
+- **Language:** TypeScript
+- **Styling:** [Tailwind CSS v4](https://tailwindcss.com/)
+- **Components:** [shadcn/ui](https://ui.shadcn.com/)
+- **Animation:** [Framer Motion](https://www.framer.com/motion/)
+- **Hosting:** GitHub Pages (static export)
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 20+
+- npm 10+
+
+### Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/sl4x0/cairo-quran-station.git
+cd cairo-quran-station
+
+# Install dependencies
 npm install
+
+# Start development server
 npm run dev
 ```
 
-## البناء للإنتاج
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### Build for Production
 
 ```bash
 npm run build
 ```
 
-## النشر
+Static files will be generated in the `out/` directory.
 
-### النشر على دومين خاص (مثل quran-station.tech)
+---
 
-المشروع مُعد للنشر على دومين خاص بدون basePath.
+## 📱 Install as PWA
 
-### النشر على GitHub Pages
+### Desktop (Chrome/Edge)
+1. Visit [quran-station.tech](https://quran-station.tech)
+2. Click the install icon in the address bar
+3. Confirm installation
 
-إذا أردت النشر على GitHub Pages بدلاً من دومين خاص، عدّل `next.config.mjs`:
+### Mobile (iOS)
+1. Open in Safari
+2. Tap Share → "Add to Home Screen"
 
-```js
-const nextConfig = {
-  output: "export",
-  trailingSlash: true,
-  basePath: "/cairo-quran-station",
-  assetPrefix: "/cairo-quran-station/",
-  // ... rest of config
-}
+### Mobile (Android)
+1. Open in Chrome
+2. Tap menu → "Install App"
+
+---
+
+## 📂 Project Structure
+
+```
+cairo-quran-station/
+├── app/                  # Next.js pages and layouts
+│   ├── page.tsx          # Homepage
+│   ├── layout.tsx        # Root layout with metadata
+│   ├── qibla/            # Qibla compass page
+│   ├── tasbih/           # Tasbih counter page
+│   ├── events/           # Islamic events page
+│   ├── about/            # About page
+│   └── privacy/          # Privacy policy
+├── components/           # React components
+│   ├── ui/               # shadcn/ui components
+│   └── *.tsx             # Feature components
+├── lib/                  # Utilities
+│   ├── storage.ts        # localStorage management
+│   ├── hijri.ts          # Hijri calendar calculations
+│   ├── api.ts            # External API calls
+│   └── theme-context.tsx # Theme provider
+├── public/               # Static assets
+│   ├── icons/            # PWA icons
+│   ├── manifest.json     # PWA manifest
+│   └── sw.js             # Service worker
+└── package.json
 ```
 
-### خطوات الرفع:
+---
 
-1. **ارفع الكود على GitHub:**
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit"
-   git remote add origin https://github.com/sl4x0/cairo-quran-station.git
-   git push -u origin main
-   ```
+## 🤝 Contributing
 
-2. **اربط الدومين:**
-   - اذهب إلى Settings > Pages
-   - اختر Source: **GitHub Actions**
-   - أضف الدومين المخصص: `quran-station.tech`
+Contributions are welcome! Please:
 
-## APIs المستخدمة
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-- **مواقيت الصلاة:** [Aladhan API](https://aladhan.com/prayer-times-api)
-- **القرآن الكريم:** [Al Quran Cloud API](https://alquran.cloud/api)
-- **البث المباشر:** إذاعة القرآن الكريم من القاهرة
+---
 
-## التواصل
+## 📄 License
 
-- **البريد:** slaxsec@gmail.com
-- **GitHub:** [sl4x0/cairo-quran-station](https://github.com/sl4x0/cairo-quran-station)
+This project is open source and available under the [MIT License](LICENSE).
 
-## الترخيص
+---
 
-MIT License
+## العربية
+
+### محطة القرآن الكريم - القاهرة
+
+بث مباشر للقرآن الكريم على مدار الساعة من إذاعة القرآن الكريم بالقاهرة.
+
+**المميزات:**
+- 📻 بث مباشر للقرآن الكريم
+- 🕌 مواقيت الصلاة لمدينة القاهرة
+- 📖 آية اليوم مع التفسير الميسر
+- 🤲 أذكار الصباح والمساء مع حفظ التقدم
+- 📿 السبحة الإلكترونية
+- 🧭 اتجاه القبلة
+- 📅 المناسبات الإسلامية بالتقويم الهجري
+
+---
+
+<p align="center">
+  Made with ❤️ for the Ummah
+</p>

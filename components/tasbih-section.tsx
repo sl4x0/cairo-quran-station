@@ -6,6 +6,7 @@ import { RotateCcw, Volume2, VolumeX, Target } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { getTasbihState, saveTasbihCount, saveTasbihTotal, saveTasbihPreferences } from "@/lib/storage"
 
 const tasbihPhrases = [
   { id: "subhanallah", text: "سُبْحَانَ اللهِ", transliteration: "Subhan Allah" },
@@ -19,22 +20,36 @@ const tasbihPhrases = [
 const targetOptions = [33, 99, 100, 500, 1000]
 
 export function TasbihSection() {
-  const [count, setCount] = useState(0)
+  const [counts, setCounts] = useState<Record<string, number>>({})
   const [target, setTarget] = useState(33)
   const [selectedPhrase, setSelectedPhrase] = useState(tasbihPhrases[0])
   const [soundEnabled, setSoundEnabled] = useState(true)
   const [totalCount, setTotalCount] = useState(0)
+  const [isLoaded, setIsLoaded] = useState(false)
 
-  // Load saved data
+  // Load saved data on mount
   useEffect(() => {
-    const saved = localStorage.getItem("tasbih-total")
-    if (saved) setTotalCount(Number.parseInt(saved, 10))
+    const state = getTasbihState()
+    setCounts(state.counts)
+    setTotalCount(state.total)
+    setTarget(state.target)
+    setSoundEnabled(state.soundEnabled)
+
+    const savedPhrase = tasbihPhrases.find(p => p.id === state.selectedId)
+    if (savedPhrase) {
+      setSelectedPhrase(savedPhrase)
+    }
+    setIsLoaded(true)
   }, [])
 
-  // Save total count
+  // Save preferences when they change
   useEffect(() => {
-    localStorage.setItem("tasbih-total", totalCount.toString())
-  }, [totalCount])
+    if (!isLoaded) return
+    saveTasbihPreferences(target, soundEnabled, selectedPhrase.id)
+  }, [target, soundEnabled, selectedPhrase.id, isLoaded])
+
+  // Get current count for selected phrase
+  const currentCount = counts[selectedPhrase.id] || 0
 
   const playClickSound = useCallback(() => {
     if (soundEnabled) {
@@ -57,16 +72,29 @@ export function TasbihSection() {
 
   const handleTasbih = () => {
     playClickSound()
-    setCount((prev) => prev + 1)
-    setTotalCount((prev) => prev + 1)
+    const newCount = currentCount + 1
+    const newCounts = { ...counts, [selectedPhrase.id]: newCount }
+    setCounts(newCounts)
+    saveTasbihCount(selectedPhrase.id, newCount)
+
+    const newTotal = totalCount + 1
+    setTotalCount(newTotal)
+    saveTasbihTotal(newTotal)
   }
 
   const handleReset = () => {
-    setCount(0)
+    const newCounts = { ...counts, [selectedPhrase.id]: 0 }
+    setCounts(newCounts)
+    saveTasbihCount(selectedPhrase.id, 0)
   }
 
-  const progress = (count / target) * 100
-  const isComplete = count >= target
+  const handlePhraseChange = (id: string) => {
+    const phrase = tasbihPhrases.find((p) => p.id === id)
+    if (phrase) setSelectedPhrase(phrase)
+  }
+
+  const progress = (currentCount / target) * 100
+  const isComplete = currentCount >= target
 
   return (
     <section
@@ -101,10 +129,7 @@ export function TasbihSection() {
               {/* Phrase Selector */}
               <Select
                 value={selectedPhrase.id}
-                onValueChange={(id) => {
-                  const phrase = tasbihPhrases.find((p) => p.id === id)
-                  if (phrase) setSelectedPhrase(phrase)
-                }}
+                onValueChange={handlePhraseChange}
               >
                 <SelectTrigger className="bg-emerald-800/50 border-emerald-700 text-white">
                   <SelectValue />
@@ -112,7 +137,12 @@ export function TasbihSection() {
                 <SelectContent>
                   {tasbihPhrases.map((phrase) => (
                     <SelectItem key={phrase.id} value={phrase.id}>
-                      {phrase.text}
+                      <span className="flex items-center justify-between w-full gap-4">
+                        <span>{phrase.text}</span>
+                        {(counts[phrase.id] || 0) > 0 && (
+                          <span className="text-xs text-muted-foreground">({counts[phrase.id]})</span>
+                        )}
+                      </span>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -138,7 +168,7 @@ export function TasbihSection() {
                     strokeLinecap="round"
                     strokeDasharray={`${2 * Math.PI * 45}`}
                     initial={{ strokeDashoffset: 2 * Math.PI * 45 }}
-                    animate={{ strokeDashoffset: 2 * Math.PI * 45 * (1 - progress / 100) }}
+                    animate={{ strokeDashoffset: 2 * Math.PI * 45 * (1 - Math.min(progress, 100) / 100) }}
                     transition={{ duration: 0.3 }}
                   />
                 </svg>
@@ -149,7 +179,7 @@ export function TasbihSection() {
                       isComplete ? "bg-green-500" : "bg-amber-500 hover:bg-amber-400"
                     }`}
                   >
-                    <span className="text-3xl sm:text-4xl font-bold text-emerald-900">{count}</span>
+                    <span className="text-3xl sm:text-4xl font-bold text-emerald-900">{currentCount}</span>
                     <span className="text-xs sm:text-sm text-emerald-800">/ {target}</span>
                   </motion.div>
                 </button>

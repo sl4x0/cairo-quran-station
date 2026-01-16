@@ -6,6 +6,7 @@ import { useState, useEffect, useCallback, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, Sun, Moon, Calendar, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { isAzkarCompletedToday } from "@/lib/storage"
 
 interface Notification {
   id: string
@@ -80,7 +81,7 @@ export function NotificationSystem({ isLiveMode = true }: { isLiveMode?: boolean
     setDismissedToday((prev) => new Set([...prev, id]))
   }, [])
 
-  // Check for azkar time
+  // Check for azkar time - RESPECTS COMPLETION STATE
   useEffect(() => {
     const checkAzkarTime = () => {
       const hour = new Date().getHours()
@@ -89,6 +90,12 @@ export function NotificationSystem({ isLiveMode = true }: { isLiveMode?: boolean
       // Morning azkar: 5 AM - 8 AM
       if (hour >= 5 && hour < 8 && !checkedRef.current.morning) {
         checkedRef.current.morning = true
+
+        // Don't show notification if user already completed morning azkar today
+        if (isAzkarCompletedToday("morning")) {
+          return
+        }
+
         const id = `azkar-morning-${today}`
         if (!dismissedToday.has(id)) {
           showNotification({
@@ -105,6 +112,12 @@ export function NotificationSystem({ isLiveMode = true }: { isLiveMode?: boolean
       // Evening azkar: 4 PM - 7 PM
       if (hour >= 16 && hour < 19 && !checkedRef.current.evening) {
         checkedRef.current.evening = true
+
+        // Don't show notification if user already completed evening azkar today
+        if (isAzkarCompletedToday("evening")) {
+          return
+        }
+
         const id = `azkar-evening-${today}`
         if (!dismissedToday.has(id)) {
           showNotification({

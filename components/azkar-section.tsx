@@ -6,6 +6,7 @@ import { Heart, Sun, Moon, ChevronLeft, ChevronRight, Check, RotateCcw } from "l
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { getAzkarState, saveAzkarState, resetAzkarState, isAzkarCompletedToday } from "@/lib/storage"
 
 interface Dhikr {
   id: string
@@ -94,11 +95,36 @@ export function AzkarSection() {
   const [activeTab, setActiveTab] = useState<"morning" | "evening">("morning")
   const [currentIndex, setCurrentIndex] = useState(0)
   const [completedCounts, setCompletedCounts] = useState<Record<string, number>>({})
+  const [isLoaded, setIsLoaded] = useState(false)
 
+  // Load saved state on mount
   useEffect(() => {
     const detectedType = getTimeBasedAzkarType()
     setActiveTab(detectedType)
+
+    // Load saved counts for the detected type
+    const savedState = getAzkarState(detectedType)
+    if (savedState.counts && Object.keys(savedState.counts).length > 0) {
+      setCompletedCounts(savedState.counts)
+    }
+    setIsLoaded(true)
   }, [])
+
+  // Load state when tab changes
+  useEffect(() => {
+    if (!isLoaded) return
+    const savedState = getAzkarState(activeTab)
+    setCompletedCounts(savedState.counts || {})
+    setCurrentIndex(0)
+  }, [activeTab, isLoaded])
+
+  // Save state when counts change
+  useEffect(() => {
+    if (!isLoaded) return
+    const azkar = activeTab === "morning" ? morningAzkar : eveningAzkar
+    const allCompleted = azkar.every((d) => (completedCounts[d.id] || 0) >= d.count)
+    saveAzkarState(activeTab, completedCounts, allCompleted)
+  }, [completedCounts, activeTab, isLoaded])
 
   const azkar = activeTab === "morning" ? morningAzkar : eveningAzkar
   const currentDhikr = azkar[currentIndex]
@@ -129,9 +155,11 @@ export function AzkarSection() {
   const handleReset = () => {
     setCompletedCounts({})
     setCurrentIndex(0)
+    resetAzkarState(activeTab)
   }
 
   const totalCompleted = azkar.filter((d) => (completedCounts[d.id] || 0) >= d.count).length
+  const allCompleted = totalCompleted === azkar.length
 
   return (
     <section className="py-12 sm:py-20 bg-gradient-to-b from-muted/50 to-amber-50/50 dark:to-amber-950/20" id="azkar">
@@ -150,9 +178,11 @@ export function AzkarSection() {
             {activeTab === "morning" ? "أذكار الصباح" : "أذكار المساء"}
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground">
-            {activeTab === "morning"
-              ? "حان وقت أذكار الصباح - حافظ على وردك اليومي"
-              : "حان وقت أذكار المساء - حافظ على وردك اليومي"}
+            {allCompleted
+              ? "بارك الله فيك! أتممت أذكارك ✨"
+              : activeTab === "morning"
+                ? "حان وقت أذكار الصباح - حافظ على وردك اليومي"
+                : "حان وقت أذكار المساء - حافظ على وردك اليومي"}
           </p>
         </motion.div>
 
@@ -168,6 +198,7 @@ export function AzkarSection() {
           >
             <Sun className="w-4 h-4" />
             أذكار الصباح
+            {isAzkarCompletedToday("morning") && <Check className="w-3 h-3 mr-1" />}
           </Button>
           <Button
             variant={activeTab === "evening" ? "default" : "outline"}
@@ -179,6 +210,7 @@ export function AzkarSection() {
           >
             <Moon className="w-4 h-4" />
             أذكار المساء
+            {isAzkarCompletedToday("evening") && <Check className="w-3 h-3 mr-1" />}
           </Button>
         </div>
 
