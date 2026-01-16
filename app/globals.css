@@ -116,8 +116,15 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-/* Custom breakpoint for extra small screens */
-@custom-variant xs (min-width: 475px);
+/* Custom xs breakpoint */
+@media (width >= 475px) {
+  .xs\:block {
+    display: block;
+  }
+  .xs\:hidden {
+    display: none;
+  }
+}
 
 @layer base {
   * {
