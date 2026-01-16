@@ -1,28 +1,30 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
+import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
-import { Menu, X, Radio, Clock, BookOpen, Heart, Calendar, Compass, MoreHorizontal, Info, Shield } from "lucide-react"
+import { Menu, X, Radio, Clock, BookOpen, Heart, Calendar, Compass, Sparkles, Book } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useTheme } from "@/lib/theme-context"
 import Link from "next/link"
 
 const mainNavLinks = [
   { href: "/#player", label: "البث المباشر", icon: Radio },
+  { href: "/quran/", label: "القرآن", icon: Book },
   { href: "/#prayer-times", label: "الصلاة", icon: Clock },
   { href: "/#verse", label: "آية اليوم", icon: BookOpen },
-  { href: "/#azkar", label: "الأذكار", icon: Heart },
 ]
 
 const moreNavLinks = [
+  { href: "/#azkar", label: "الأذكار", icon: Heart },
+  { href: "/#duas", label: "الأدعية", icon: Sparkles },
   { href: "/qibla/", label: "القبلة", icon: Compass },
-  { href: "/tasbih/", label: "السبحة", icon: MoreHorizontal },
-  { href: "/events/", label: "المناسبات", icon: Calendar },
-  { href: "/about/", label: "من نحن", icon: Info },
-  { href: "/privacy/", label: "الخصوصية", icon: Shield },
+  { href: "/tasbih/", label: "السبحة", icon: Heart },
+  { href: "/events/", label: "التقويم", icon: Calendar },
 ]
 
 export function Navigation() {
+  const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
@@ -31,6 +33,9 @@ export function Navigation() {
 
   const lastScrollY = useRef(0)
   const ticking = useRef(false)
+
+  // Check if we're on homepage (for transparent header) or inner page (solid header)
+  const isHomepage = pathname === "/"
 
   useEffect(() => {
     const handleScroll = () => {
@@ -47,13 +52,15 @@ export function Navigation() {
           // 3. Mobile menu is open
           if (currentScrollY <= 50) {
             setIsVisible(true)
-          } else if (currentScrollY < lastScrollY.current) {
-            // Scrolling up
+          } else if (currentScrollY < lastScrollY.current - 5) {
+            // Scrolling up (with small threshold)
             setIsVisible(true)
           } else if (currentScrollY > lastScrollY.current + 10) {
             // Scrolling down (with small threshold to avoid jitter)
-            setIsVisible(false)
-            setShowMore(false) // Close dropdown when hiding
+            if (!isOpen) {
+              setIsVisible(false)
+              setShowMore(false)
+            }
           }
 
           lastScrollY.current = currentScrollY
@@ -65,7 +72,7 @@ export function Navigation() {
 
     window.addEventListener("scroll", handleScroll, { passive: true })
     return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+  }, [isOpen])
 
   // Keep header visible when mobile menu is open
   useEffect(() => {
@@ -74,13 +81,16 @@ export function Navigation() {
     }
   }, [isOpen])
 
+  // On inner pages, always use solid background
+  const usesSolidBg = !isHomepage || isScrolled
+
   return (
     <motion.header
       initial={{ y: 0 }}
       animate={{ y: isVisible ? 0 : -100 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-background/95 backdrop-blur-md shadow-md" : "bg-transparent"
+        usesSolidBg ? "bg-background/95 backdrop-blur-md shadow-md" : "bg-transparent"
       }`}
     >
       <div className="container mx-auto px-4">
@@ -89,24 +99,24 @@ export function Navigation() {
           <Link href="/" className="flex items-center gap-2 sm:gap-3">
             <div
               className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center transition-colors duration-500 ${
-                isScrolled ? "bg-primary/10" : "bg-white/20"
+                usesSolidBg ? "bg-primary/10" : "bg-white/20"
               }`}
             >
               <Radio
-                className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors duration-500 ${isScrolled ? "text-primary" : "text-white"}`}
+                className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors duration-500 ${usesSolidBg ? "text-primary" : "text-white"}`}
               />
             </div>
             <div className="flex flex-col">
               <span
                 className={`font-serif font-bold text-base sm:text-lg hidden xs:block transition-colors duration-500 ${
-                  isScrolled ? "text-foreground" : "text-white"
+                  usesSolidBg ? "text-foreground" : "text-white"
                 }`}
               >
                 محطة القرآن
               </span>
               <span
                 className={`text-xs hidden sm:block transition-colors duration-500 ${
-                  isScrolled ? "text-muted-foreground" : "text-white/70"
+                  usesSolidBg ? "text-muted-foreground" : "text-white/70"
                 }`}
               >
                 وقت {periodName}
@@ -121,7 +131,7 @@ export function Navigation() {
                 key={link.href}
                 href={link.href}
                 className={`flex items-center gap-2 px-3 xl:px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  isScrolled
+                  usesSolidBg
                     ? "text-muted-foreground hover:text-primary hover:bg-primary/5"
                     : "text-white/80 hover:text-white hover:bg-white/10"
                 }`}
@@ -136,12 +146,12 @@ export function Navigation() {
               <button
                 onClick={() => setShowMore(!showMore)}
                 className={`flex items-center gap-2 px-3 xl:px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  isScrolled
+                  usesSolidBg
                     ? "text-muted-foreground hover:text-primary hover:bg-primary/5"
                     : "text-white/80 hover:text-white hover:bg-white/10"
                 }`}
               >
-                <MoreHorizontal className="w-4 h-4" />
+                <Calendar className="w-4 h-4" />
                 <span>المزيد</span>
               </button>
 
@@ -176,7 +186,7 @@ export function Navigation() {
             <div className="hidden md:block">
               <Button
                 className={`transition-all duration-500 ${
-                  isScrolled
+                  usesSolidBg
                     ? "bg-primary hover:bg-primary/90 text-primary-foreground"
                     : "bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm"
                 }`}
@@ -193,7 +203,7 @@ export function Navigation() {
             <Button
               variant="ghost"
               size="icon"
-              className={`lg:hidden transition-colors duration-500 ${isScrolled ? "text-foreground" : "text-white"}`}
+              className={`lg:hidden transition-colors duration-500 ${usesSolidBg ? "text-foreground" : "text-white"}`}
               onClick={() => setIsOpen(!isOpen)}
             >
               {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}

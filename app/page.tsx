@@ -5,6 +5,7 @@ import { QuranPlayerSection } from "@/components/quran-player-section"
 import { PrayerTimesSection } from "@/components/prayer-times-section"
 import { VerseOfDaySection } from "@/components/verse-of-day-section"
 import { AzkarSection } from "@/components/azkar-section"
+import { DailyDuasSection } from "@/components/daily-duas-section"
 import { CTASection } from "@/components/cta-section"
 import { Footer } from "@/components/footer"
 import { PWAInstallPrompt } from "@/components/pwa-install-prompt"
@@ -15,7 +16,7 @@ export const metadata: Metadata = {
   title: "محطة القرآن الكريم - القاهرة | بث مباشر على مدار الساعة",
   description:
     "استمع إلى القرآن الكريم ببث مباشر من القاهرة على مدار الساعة. مواقيت الصلاة، آية اليوم مع التفسير، والأذكار اليومية.",
-  keywords: ["قرآن", "بث مباشر", "القاهرة", "مواقيت الصلاة", "تلاوة", "إسلام", "أذكار"],
+  keywords: ["قرآن", "بث مباشر", "القاهرة", "مواقيت الصلاة", "تلاوة", "إسلام", "أذكار", "Quran Radio Cairo", "إذاعة القرآن الكريم"],
   openGraph: {
     title: "محطة القرآن الكريم - القاهرة",
     description: "بث مباشر للقرآن الكريم من القاهرة على مدار الساعة",
@@ -79,6 +80,7 @@ export default function HomePage() {
         <PrayerTimesSection />
         <VerseOfDaySection />
         <AzkarSection />
+        <DailyDuasSection />
         <CTASection />
       </main>
       <Footer />
