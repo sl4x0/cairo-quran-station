@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { Navigation } from "@/components/navigation"
 import { HeroSection } from "@/components/hero-section"
+import { RamadanCountdown } from "@/components/ramadan-countdown"
 import { QuranPlayerSection } from "@/components/quran-player-section"
 import { PrayerTimesSection } from "@/components/prayer-times-section"
 import { VerseOfDaySection } from "@/components/verse-of-day-section"
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
   title: "محطة القرآن الكريم - القاهرة | بث مباشر على مدار الساعة",
   description:
     "استمع إلى القرآن الكريم ببث مباشر من القاهرة على مدار الساعة. مواقيت الصلاة، آية اليوم مع التفسير، والأذكار اليومية.",
-  keywords: ["قرآن", "بث مباشر", "القاهرة", "مواقيت الصلاة", "تلاوة", "إسلام", "أذكار", "Quran Radio Cairo", "إذاعة القرآن الكريم"],
+  keywords: ["قرآن", "بث مباشر", "القاهرة", "مواقيت الصلاة", "تلاوة", "إسلام", "أذكار", "رمضان", "إفطار", "سحور", "Quran Radio Cairo", "إذاعة القرآن الكريم"],
   openGraph: {
     title: "محطة القرآن الكريم - القاهرة",
     description: "بث مباشر للقرآن الكريم من القاهرة على مدار الساعة",
@@ -76,6 +77,7 @@ export default function HomePage() {
       <Navigation />
       <main className="min-h-screen">
         <HeroSection />
+        <RamadanCountdown />
         <QuranPlayerSection />
         <PrayerTimesSection />
         <VerseOfDaySection />

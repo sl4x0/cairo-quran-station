@@ -3,9 +3,10 @@
 import { useState, useEffect, useRef } from "react"
 import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
-import { Menu, X, Radio, Clock, BookOpen, Heart, Calendar, Compass, Sparkles, Book } from "lucide-react"
+import { Menu, X, Radio, Clock, BookOpen, Heart, Calendar, Compass, Sparkles, Book, Moon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useTheme } from "@/lib/theme-context"
+import { fetchPrayerTimes } from "@/lib/api"
 import Link from "next/link"
 
 const mainNavLinks = [
@@ -21,6 +22,7 @@ const moreNavLinks = [
   { href: "/qibla/", label: "القبلة", icon: Compass },
   { href: "/tasbih/", label: "السبحة", icon: Heart },
   { href: "/events/", label: "التقويم", icon: Calendar },
+  { href: "/ramadan/", label: "رمضان", icon: Moon },
 ]
 
 export function Navigation() {
@@ -29,7 +31,23 @@ export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
   const [showMore, setShowMore] = useState(false)
+  const [isRamadan, setIsRamadan] = useState(false)
   const { periodName } = useTheme()
+
+  useEffect(() => {
+    // Cache result in sessionStorage to avoid API call on every page navigation
+    const cached = sessionStorage.getItem("is-ramadan")
+    if (cached !== null) {
+      setIsRamadan(cached === "true")
+      return
+    }
+    fetchPrayerTimes(30.0444, 31.2357).then((data) => {
+      if (!data) return
+      const isRam = data.date.hijri.month.number === 9
+      sessionStorage.setItem("is-ramadan", isRam.toString())
+      setIsRamadan(isRam)
+    })
+  }, [])
 
   const lastScrollY = useRef(0)
   const ticking = useRef(false)
@@ -122,6 +140,17 @@ export function Navigation() {
                 وقت {periodName}
               </span>
             </div>
+            {/* Ramadan badge */}
+            {isRamadan && (
+              <Link
+                href="/ramadan/"
+                className="hidden sm:flex items-center gap-1 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 text-amber-600 dark:text-amber-300 rounded-full px-2 py-0.5 text-xs font-medium transition-colors"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Moon className="w-3 h-3" />
+                رمضان
+              </Link>
+            )}
           </Link>
 
           {/* Desktop Navigation */}

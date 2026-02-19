@@ -9,7 +9,7 @@ export interface PrayerTimesData {
 
 export interface HijriDate {
   day: string
-  month: { ar: string; en: string }
+  month: { number: number; ar: string; en: string }
   year: string
   designation: { abbreviated: string; expanded: string }
 }

@@ -28,6 +28,13 @@ const STORAGE_KEYS = {
 
   // Notifications
   NOTIFICATION_PERMISSION: "notification-permission",
+
+  // Quran Bookmarks
+  QURAN_BOOKMARKS: "quran-bookmarks",
+
+  // Ramadan
+  RAMADAN_QURAN_TRACKER: "ramadan-quran-tracker",
+  RAMADAN_TARAWIH: "ramadan-tarawih",
 } as const
 
 type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS]
@@ -180,4 +187,61 @@ export function getPlayerStation(): string {
 
 export function savePlayerStation(stationId: string): void {
   setStorageItem(STORAGE_KEYS.PLAYER_STATION, stationId)
+}
+
+// ==================== QURAN BOOKMARKS ====================
+
+export interface QuranBookmark {
+  surahNumber: number
+  surahName: string
+  ayahNumber: number
+  ayahText: string
+  savedAt: string
+}
+
+export function getQuranBookmarks(): QuranBookmark[] {
+  return getStorageItem<QuranBookmark[]>(STORAGE_KEYS.QURAN_BOOKMARKS, [])
+}
+
+export function addQuranBookmark(bookmark: QuranBookmark): void {
+  const existing = getQuranBookmarks()
+  const isDuplicate = existing.some(
+    (b) => b.surahNumber === bookmark.surahNumber && b.ayahNumber === bookmark.ayahNumber,
+  )
+  if (!isDuplicate) {
+    setStorageItem(STORAGE_KEYS.QURAN_BOOKMARKS, [...existing, bookmark])
+  }
+}
+
+export function removeQuranBookmark(surahNumber: number, ayahNumber: number): void {
+  const existing = getQuranBookmarks()
+  setStorageItem(
+    STORAGE_KEYS.QURAN_BOOKMARKS,
+    existing.filter((b) => !(b.surahNumber === surahNumber && b.ayahNumber === ayahNumber)),
+  )
+}
+
+export function isQuranBookmarked(surahNumber: number, ayahNumber: number): boolean {
+  return getQuranBookmarks().some((b) => b.surahNumber === surahNumber && b.ayahNumber === ayahNumber)
+}
+
+// ==================== RAMADAN ====================
+
+export function getRamadanQuranTracker(): number[] {
+  return getStorageItem<number[]>(STORAGE_KEYS.RAMADAN_QURAN_TRACKER, [])
+}
+
+export function toggleRamadanJuz(juz: number): number[] {
+  const completed = getRamadanQuranTracker()
+  const updated = completed.includes(juz) ? completed.filter((j) => j !== juz) : [...completed, juz]
+  setStorageItem(STORAGE_KEYS.RAMADAN_QURAN_TRACKER, updated)
+  return updated
+}
+
+export function getRamadanTarawih(): number {
+  return getStorageItem<number>(STORAGE_KEYS.RAMADAN_TARAWIH, 0)
+}
+
+export function saveRamadanTarawih(count: number): void {
+  setStorageItem(STORAGE_KEYS.RAMADAN_TARAWIH, count)
 }
